@@ -3,17 +3,29 @@
 # provision-target.sh
 # Prepara la VM bersaglio (Ubuntu Server, senza grafica) con le app web
 # vulnerabili in Docker. Da eseguire con internet attivo, poi esportare in OVA.
+# Rileva da solo l'interfaccia della rete interna: funziona su VirtualBox,
+# Parallels e UTM senza modifiche.
 #
-# Uso (dentro la VM Ubuntu):
+# Uso (dentro la VM Ubuntu, con la scheda NAT attiva per internet):
 #   sudo ./provision-target.sh
 #
 set -euo pipefail
 
 LAB_IP="10.10.10.20"       # IP del target sulla rete interna
-IFACE="enp0s8"             # secondo adattatore = rete interna (verifica con: ip a)
 
 if [ "$(id -u)" -ne 0 ]; then echo "Esegui con sudo."; exit 1; fi
-echo "[*] Provisioning target - Ubuntu + Docker"
+
+# --- Rilevamento automatico dell'interfaccia interna ---
+# La scheda con internet (NAT) ha il gateway di default; l'interfaccia
+# interna e' l'altra scheda ethernet (en* o eth*).
+DEFAULT_IF="$(ip route show default 2>/dev/null | awk '{print $5; exit}')"
+IFACE="$(ip -o link show | awk -F': ' '{print $2}' | sed 's/@.*//' \
+         | grep -E '^(en|eth)' | grep -v "^${DEFAULT_IF}$" | head -n1)"
+if [ -z "$IFACE" ]; then
+  echo "[!] Non ho trovato l'interfaccia interna. Verifica con 'ip a' e impostala a mano."
+  exit 1
+fi
+echo "[*] Provisioning target - Ubuntu + Docker - interfaccia interna: $IFACE"
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
@@ -50,7 +62,11 @@ EOF
 docker compose -f /opt/lab/docker-compose.yml pull
 docker compose -f /opt/lab/docker-compose.yml up -d
 
-# 3) Pagina segnaposto "Banca della Scuola" con la flag della Lezione 1 (porta 8080)
+# 3) Immagine nginx in cache: serve alla "Banca della Scuola" quando il
+#    bersaglio e' isolato (senza internet non si potrebbe scaricare).
+docker pull nginx:alpine
+
+# 4) Pagina segnaposto "Banca della Scuola" con la flag della Lezione 1 (porta 8080)
 mkdir -p /opt/lab/banca
 cat > /opt/lab/banca/index.html <<'EOF'
 <!doctype html>
