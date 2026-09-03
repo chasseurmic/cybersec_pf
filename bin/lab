@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# lab · avvia la configurazione di una lezione dal repository del corso
+set -euo pipefail
+
+# anti rientro: se lab e' gia' in esecuzione, esci
+if [ -n "${LAB_IN_CORSO:-}" ]; then
+  echo "lab e' gia' in esecuzione, esco." >&2
+  exit 1
+fi
+export LAB_IN_CORSO=1
+ 
+# ===== CONFIG: sostituisci con il tuo utente e repo GitHub =====
+REPO_RAW="https://raw.githubusercontent.com/chasseurmic/cybersec_pf/main"
+# ===============================================================
+ 
+ROLE="$(cat /etc/lab-role 2>/dev/null || echo kali)"
+ 
+if [ $# -lt 1 ]; then
+  echo "Uso: lab <numero-lezione>   (esempio: lab 3)"
+  exit 1
+fi
+ 
+num="$(printf '%02d' "$1")"
+url="$REPO_RAW/lezioni/lezione-$num/$ROLE.sh"
+tmp="$(mktemp)"
+ 
+echo "[*] Lezione $num · ruolo $ROLE"
+echo "[*] Scarico: $url"
+if ! curl -fsSL "$url" -o "$tmp"; then
+  echo "[!] Script non trovato. Controlla il numero della lezione o la connessione."
+  rm -f "$tmp"; exit 1
+fi
+ 
+echo
+echo "===== ANTEPRIMA · leggi prima di eseguire ====================="
+sed -n '1,25p' "$tmp"
+echo "==============================================================="
+echo
+read -r -p "Eseguire questo script di configurazione? [s/N] " risposta
+case "$risposta" in
+  s|S|si|Si|SI) echo "[*] Eseguo..."; sudo bash "$tmp" ;;
+  *) echo "[*] Annullato." ;;
+esac
+rm -f "$tmp"
+
