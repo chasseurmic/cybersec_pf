@@ -1,0 +1,6 @@
+# Materiale d'aula e immagini: fuori dal repo pubblico
+lezioni/Lezioni/
+*.ova
+
+# Rumore di sistema
+.DS_Store
