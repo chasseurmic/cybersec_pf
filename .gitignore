@@ -4,3 +4,7 @@ lezioni/Lezioni/
 
 # Rumore di sistema
 .DS_Store
+
+# Cache Python del generatore Word
+__pycache__/
+*.pyc
