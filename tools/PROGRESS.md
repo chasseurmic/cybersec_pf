@@ -17,7 +17,7 @@ in `tools/lezioni_src/lezNN.py`. Build con `python3 tools/build_lezioni.py`
 | 05 | Utenti, gruppi, processi e servizi | B2 | ok | ok | ok | verificata |
 | 06 | Bash scripting offensivo (host scanner) | B2 | ok | ok | ok | verificata |
 | 07 | Footprinting e OSINT (simulati) | B3 | ok | ok | ok | verificata |
-| 08 | Scoperta host e rete locale | B3 | - | - | - | da fare |
+| 08 | Scoperta host e rete locale | B3 | ok | ok | ok | verificata |
 | 09 | Port scanning con nmap e Python | B3 | - | - | - | da fare |
 | 10 | Enumerazione servizi e banner grabbing | B3 | - | - | - | da fare |
 | 11 | Come funziona il web (HTTP, curl) | B4 | - | - | - | da fare |
