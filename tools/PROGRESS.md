@@ -15,7 +15,7 @@ in `tools/lezioni_src/lezNN.py`. Build con `python3 tools/build_lezioni.py`
 | 03 | Filesystem e permessi | B2 | ok | ok | (in dispensa) | verificata (preesistente) |
 | 04 | Navigazione avanzata, redirezioni e pipe | B2 | ok | ok | ok | verificata |
 | 05 | Utenti, gruppi, processi e servizi | B2 | ok | ok | ok | verificata |
-| 06 | Bash scripting offensivo (host scanner) | B2 | - | - | - | da fare |
+| 06 | Bash scripting offensivo (host scanner) | B2 | ok | ok | ok | verificata |
 | 07 | Footprinting e OSINT (simulati) | B3 | - | - | - | da fare |
 | 08 | Scoperta host e rete locale | B3 | - | - | - | da fare |
 | 09 | Port scanning con nmap e Python | B3 | - | - | - | da fare |
