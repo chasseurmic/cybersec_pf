@@ -34,8 +34,13 @@ cat <<'MSG'
         # leggi il campo commento dell'utente sospetto
 
  [ ] 2  Trova la password lasciata in un processo              (+20)
-        ps aux | grep -i pass
-        systemctl status lab05-daemon          # da dove arriva
+        ps aux | grep -i pass                  # leggi il PID (2a colonna)
+        # ora risali dal processo al servizio che lo ha avviato:
+        systemctl status <PID>                 # systemctl risale all'unita' dal PID
+        # scorciatoia:  systemctl status "$(pgrep -f finto-daemon | head -1)"
+        # in alternativa, cerca chi lo lancia nei file dei servizi:
+        grep -rl finto-daemon /etc/systemd/system/
+        # cosi' scopri il nome:  lab05-daemon  ->  systemctl status lab05-daemon
 
  [ ] 3  Scopri il servizio su una porta insolita               (+15)
         ss -tlnp                               # porte in ascolto

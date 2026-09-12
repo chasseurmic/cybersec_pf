@@ -77,10 +77,30 @@ def dispensa(d):
     ])
 
     d.h2("Passo 2 · La password nel processo (+20)")
-    d.p("Un finto demone e' stato avviato con la password tra gli argomenti. Trovala.")
+    d.p("Un finto demone e' stato avviato con la password tra gli argomenti. Prima "
+        "trovala; poi risali dal processo al servizio che lo ha avviato.")
     d.code([
-        "ps aux | grep -i pass",
-        "systemctl status lab05-daemon    # da quale servizio arriva",
+        "ps aux | grep -i pass          # trovi il processo e il suo PID (2a colonna)",
+    ])
+    d.p("`ps` ti mostra il programma (`/usr/local/bin/finto-daemon`) e il suo PID, ma non "
+        "il nome del servizio. Per arrivarci il percorso e': processo, poi PID, poi unita' "
+        "systemd.")
+    d.code([
+        "systemctl status <PID>         # systemctl risale all'unita' partendo dal PID",
+        "# scorciatoia (trova il PID da solo):",
+        "systemctl status \"$(pgrep -f finto-daemon | head -1)\"",
+    ])
+    d.p("In alternativa, cerca chi lo lancia nei file dei servizi: chi avvia un programma "
+        "lo nomina nel proprio `ExecStart`.")
+    d.code([
+        "grep -rl finto-daemon /etc/systemd/system/    # ti indica lab05-daemon.service",
+        "systemctl status lab05-daemon                 # ora sai il nome",
+    ])
+    d.box("blu", "Dal processo al servizio", intro=(
+        "Tre modi per sapere quale unita' systemd ha avviato un processo:"), items=[
+        "`systemctl status <PID>`: systemctl conosce l'unita' di ogni processo che ha avviato.",
+        "`grep -rl <programma> /etc/systemd/system/`: trova il file del servizio che lo lancia.",
+        "`cat /proc/<PID>/cgroup`: contiene il percorso ...system.slice/<servizio>.service.",
     ])
 
     d.h2("Passo 3 · La porta dimenticata (+15)")
@@ -162,7 +182,8 @@ def manuale(d):
     d.h1("Soluzioni e valori delle flag")
     d.table(["Passo", "Comando risolutivo", "Flag"], [
         ["1", "grep backup /etc/passwd (leggere il campo commento)", "FLAG{utente_di_troppo}"],
-        ["2", "ps aux | grep -i pass", "FLAG{la_password_e_nel_processo}"],
+        ["2", "ps aux | grep -i pass ; poi systemctl status <PID> (o grep -rl finto-daemon "
+         "/etc/systemd/system/) per risalire a lab05-daemon", "FLAG{la_password_e_nel_processo}"],
         ["3", "ss -tlnp | grep 31337 ; curl localhost:31337", "FLAG{una_porta_dimenticata}"],
         ["4", "sudo -l ; sudo /usr/local/bin/lab05-flag", "FLAG{sudo_apre_le_porte}"],
     ], widths=[900, 5626, 2500])
