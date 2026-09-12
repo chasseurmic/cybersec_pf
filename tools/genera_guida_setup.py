@@ -222,6 +222,55 @@ def build():
         "Immagine docente a parte con `provision-kali.sh docente`.",
     ])
 
+    d.h1("Appendice · Costruire con UTM sul Mac e portare su Windows")
+    d.p("Se hai solo un Mac Apple Silicon, puoi comunque produrre un'immagine x86 usando "
+        "UTM, ma con un vincolo preciso e qualche passaggio. In molti casi resta piu' "
+        "semplice installare direttamente su un PC Windows x86 (gli script fanno tutto il "
+        "lavoro); valuta questa strada solo se non hai un PC x86 a disposizione.")
+    d.box("rosso", "La condizione che rende tutto possibile", items=[
+        "UTM 'Virtualizza' = solo guest ARM64 (veloce) e NON usabile su Windows x86.",
+        "UTM 'Emula' = puo' fare guest x86-64 (lento) e QUESTO gira su Windows.",
+        "Quindi in UTM devi creare la VM in modalita' EMULAZIONE, architettura x86_64.",
+    ])
+    d.h2("Procedura")
+    d.numbered([
+        "UTM: Crea VM > Emula > Architettura x86_64 > installa Kali/Ubuntu Server da ISO "
+        "x86-64.",
+        "Firmware: se puoi installa in BIOS/Legacy (combacia col default di VirtualBox); "
+        "se usi UEFI, dovrai abilitare EFI in VirtualBox, altrimenti non si avvia.",
+        "Consiglio: in UTM fai solo l'installazione base del sistema; il provisioning "
+        "(che vuole internet e la seconda scheda) fallo dopo, su VirtualBox in Windows.",
+        "Spegni la VM. Trova i dischi nel bundle .utm (tasto destro > Mostra contenuto "
+        "pacchetto > Data/*.qcow2).",
+        "Converti ogni disco in formato VirtualBox (serve qemu-img: `brew install qemu`):",
+    ])
+    d.code([
+        "qemu-img convert -O vdi Data/disco.qcow2 kali.vdi",
+        "# (in alternativa -O vmdk per VMware, -O vhdx per Hyper-V)",
+    ])
+    d.numbered([
+        "Copia i file .vdi sul PC Windows.",
+        "VirtualBox (Windows): Nuova VM (Linux 64-bit) > 'Usa un file di disco esistente' "
+        "> scegli il .vdi. Ripeti per il bersaglio.",
+        "Configura le due schede (Scheda 1 NAT, Scheda 2 Rete interna `labnet`); abilita "
+        "EFI se avevi installato in UEFI.",
+        "Avvia, esegui provision-*.sh + installa `lab` + `/etc/lab-role` se non fatti, "
+        "verifica ed esporta l'OVA da Windows.",
+    ])
+    d.box("verde", "Insidie da conoscere", items=[
+        "L'emulazione x86 in UTM sul Mac e' lenta (installazione da zero emulata).",
+        "UTM non esporta in OVA: il disco va convertito a mano con qemu-img.",
+        "Il firmware EFI/BIOS deve combaciare tra UTM e VirtualBox, altrimenti non avvia.",
+        "Rete e controller disco si riconfigurano comunque in VirtualBox.",
+        "Vantaggio: i guest sono Linux, quindi si spostano tra hypervisor molto meglio di "
+        "un guest Windows; gli script rilevano da soli la scheda interna, quindi il "
+        "cambio di nome interfaccia non e' un problema.",
+    ])
+    d.p("In sintesi: si puo' fare, ma tra emulazione lenta, conversione del disco e "
+        "firmware da far combaciare, spesso conviene costruire l'immagine finale "
+        "direttamente su un PC x86. UTM resta ottimo (in ARM, veloce) per provare prima "
+        "che gli script funzionino.")
+
     out = os.path.join(HERE, "..", "lezioni", "Lezioni", "Guida-Setup-Laboratorio.docx")
     d.save(out)
     return out
