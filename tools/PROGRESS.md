@@ -20,7 +20,7 @@ in `tools/lezioni_src/lezNN.py`. Build con `python3 tools/build_lezioni.py`
 | 08 | Scoperta host e rete locale | B3 | ok | ok | ok | verificata |
 | 09 | Port scanning con nmap e Python | B3 | ok | ok | ok | verificata |
 | 10 | Enumerazione servizi e banner grabbing | B3 | ok | ok | ok | verificata |
-| 11 | Come funziona il web (HTTP, curl) | B4 | - | - | - | da fare |
+| 11 | Come funziona il web (HTTP, curl) | B4 | ok | ok | ok | verificata |
 | 12 | Banca della Scuola e SQL injection base | B4 | - | - | - | da fare |
 | 13 | SQL injection avanzata e sqlmap | B4 | - | - | - | da fare |
 | 14 | XSS reflected e stored | B4 | - | - | - | da fare |
