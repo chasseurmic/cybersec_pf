@@ -138,14 +138,55 @@ anche dalla Kali.
 
 ## Lezioni disponibili
 
+Tutte le 40 lezioni del corso. Ogni lezione ha gli script in `lezioni/lezione-NN/`
+(scaricabili con `lab NN`) e, in `lezioni/Lezioni/`, la dispensa studenti e il
+manuale docente in formato Word.
+
 | N | Titolo | Contenuto script |
 |---|---|---|
 | 01 | Triade CIA e primo accesso | flag di benvenuto su Kali e pagina Banca sul bersaglio |
 | 02 | Allestimento del laboratorio | self-check dell'ambiente + strumenti di build ed export OVA |
 | 03 | Filesystem e permessi | caccia al tesoro sul bersaglio via SSH (utente ospite `studente`) |
+| 04 | Navigazione, redirezioni e pipe | setaccio di log e file: grep, cut, sort, uniq, redirezioni |
+| 05 | Utenti, gruppi, processi e servizi | enumerazione post-accesso: utenti, ps, ss, sudo |
+| 06 | Bash scripting offensivo | tool: host alive scanner in bash (ping sweep + porte) |
+| 07 | Footprinting e OSINT (simulati) | footprint del sito: robots, header, dir busting, backup |
+| 08 | Scoperta host e rete locale | nmap -sn, ARP (ip neigh); verificatore lab08 |
+| 09 | Port scanning con nmap e Python | tool: portscan.py; servizio segreto su :7777 |
+| 10 | Enumerazione servizi e banner | banner grabbing (nc, nmap -sV) su servizi finti |
+| 11 | Come funziona il web (HTTP, curl) | portale HTTP didattico: GET/POST, header, cookie, stati |
+| 12 | Banca della Scuola e SQL injection | piattaforma web vulnerabile (:8080); login bypass e dump |
+| 13 | SQL injection avanzata e sqlmap | UNION su tabelle; dump automatico con sqlmap |
+| 14 | XSS reflected e stored | XSS su ricerca e bacheca della Banca |
+| 15 | Autenticazione, cookie e sessioni | cookie prevedibile: impersonazione e controllo accessi rotto |
+| 16 | Brute force del login e difesa | tool: bruteforce.py; login /debole e /forte (rate limiting) |
+| 17 | File upload, path traversal e LFI | LFI sulla Banca; servizio di upload non validato |
+| 18 | OWASP Top 10 e mini CTF web | mini CTF a catena SQLi -> LFI |
+| 19 | Password: hash e salt | dump md5, hash a senso unico, effetto del salt |
+| 20 | Cracking a dizionario | tool: cracker.py; john e hashcat |
+| 21 | Cifratura simmetrica e asimmetrica | openssl: AES, RSA, firma digitale |
+| 22 | HTTPS e TLS, certificati | server HTTPS self-signed (:8443); lettura del certificato |
+| 23 | TCP/IP e Wireshark | beacon in chiaro da catturare con tcpdump/Wireshark |
+| 24 | Sniffing di credenziali con scapy | tool: sniffer.py; harvesting automatico dal traffico |
+| 25 | ARP spoofing e MITM con scapy | tool: arpspoof.py; intercettazione di traffico dirottato |
+| 26 | DNS spoofing in rete locale | DNS canaglia + sito civetta (stdlib) |
+| 27 | Difese di rete (firewall, IDS) | blue team: iptables + IDS a porte esca |
+| 28 | Social engineering | analisi delle tecniche di manipolazione e pretexting |
+| 29 | Pagina di phishing didattica | tool: clone del login che cattura credenziali + redirect |
+| 30 | Riconoscere il phishing | classificare URL lookalike; url-inspector |
+| 31 | Malware: tipi e ciclo di vita | classificazione e ciclo di vita (solo descrizioni) |
+| 32 | Analisi statica in sandbox | file/strings/sha256/base64 su un campione innocuo |
+| 33 | Ransomware didattico in sandbox | (non sviluppata: vedi nota nel manuale L34) |
+| 34 | Analisi dinamica e IOC | osservare un campione (drop file + C2) con strace/ss |
+| 35 | Hardening di sistema | blue team: servizi, SSH, permessi; verificatore lab35 |
+| 36 | Log, monitoraggio e rilevamento | analisi di auth.log: brute force e compromissione |
+| 37 | Incident response di base | PICERL: contenere account, eradicare persistenza, bloccare IP |
+| 38 | Preparazione e ripasso CTF | allenamento a 4 mini sfide + strategia di squadra |
+| 39 | CTF finale a squadre | 6 sfide sul bersaglio, flag runtime, ctf-verifica |
+| 40 | Debrief e difese apprese | mappa attacco-difesa, quiz finale, completamento |
 
-Le lezioni successive vengono aggiunte con la stessa struttura
-`lezioni/lezione-NN/`.
+> La Lezione 33 (ransomware didattico) non e' stata sviluppata su scelta del
+> docente. Il Blocco 8 resta completo nei concetti (L31, L32, L34).
 
 ---
 

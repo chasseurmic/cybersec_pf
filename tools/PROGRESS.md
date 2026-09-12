@@ -56,3 +56,25 @@ in `tools/lezioni_src/lezNN.py`. Build con `python3 tools/build_lezioni.py`
   l'orchestratore `tools/build_lezioni.py`. Stile allineato a L2/L3
   (intestazione, riquadri con accento, codice su sfondo scuro, tabelle a righe
   alternate; H1 blu, H2 verde, H3 blu).
+
+## Riepilogo finale (2026-09-12)
+- Sviluppate le Lezioni 4-40 (tranne la 33, saltata su richiesta del docente):
+  36 lezioni nuove, ognuna con script (kali.sh/target.sh, `bash -n` ok, LF, idempotenti),
+  dispensa studenti e manuale docente .docx in `lezioni/Lezioni/`.
+- Generatore Word condiviso: `tools/docxgen.py` (solo stdlib). Sorgenti in
+  `tools/lezioni_src/lezNN.py`. Build: `python3 tools/build_lezioni.py`.
+- Piattaforma web del Blocco 4: "Banca della Scuola" in Python stdlib+sqlite3
+  (`lezioni/lezione-12/target.sh`), su :8080, con SQLi/XSS/broken-access/LFI.
+- Flag: didattiche in chiaro nei primi blocchi; generate a runtime (fuori dal repo
+  pubblico) dalle sfide vere (Blocco 4 in poi) in `/opt/lab/*/flags.env` sul bersaglio.
+- README aggiornato con la tabella di tutte e 40 le lezioni.
+
+### Punti da provare a mano sul bersaglio reale x86 (non testabili qui)
+- Container Docker: DVWA/Juice Shop (L1-L2) e la pagina nginx "Banca" arricchita della
+  L7 (autoindex + header): richiedono Docker Hub al setup (qui non disponibile).
+- ARP spoofing e MITM (L25) e la catena DNS+ARP (L26): l'effetto sulla rete va provato
+  sulle due VM x86 (qui verificata solo la logica; DNS spoofing con DNS canaglia testato
+  in locale).
+- scapy (L24-L25): sniff()/send() richiedono root e l'interfaccia interna sul bersaglio reale.
+- Comandi che dipendono da Linux/Kali (iptables, systemctl, strace, sha256sum, base64 -d):
+  verificati per sintassi/logica; da eseguire in aula sulle VM.
