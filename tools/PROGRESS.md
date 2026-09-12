@@ -35,7 +35,7 @@ in `tools/lezioni_src/lezNN.py`. Build con `python3 tools/build_lezioni.py`
 | 23 | TCP/IP e Wireshark | B6 | ok | ok | ok | verificata |
 | 24 | Sniffing di credenziali con scapy | B6 | ok | ok | ok | verificata |
 | 25 | ARP spoofing e MITM con scapy | B6 | ok | ok | ok | verificata |
-| 26 | DNS spoofing in rete locale | B6 | - | - | - | da fare |
+| 26 | DNS spoofing in rete locale | B6 | ok | ok | ok | verificata |
 | 27 | Difese di rete (firewall, IDS) | B6 | - | - | - | da fare |
 | 28 | Social engineering, principi e casi | B7 | - | - | - | da fare |
 | 29 | Pagina di phishing didattica | B7 | - | - | - | da fare |
