@@ -48,7 +48,7 @@ in `tools/lezioni_src/lezNN.py`. Build con `python3 tools/build_lezioni.py`
 | 36 | Log, monitoraggio e rilevamento | B9 | ok | ok | ok | verificata |
 | 37 | Incident response di base | B9 | ok | ok | ok | verificata |
 | 38 | Preparazione e ripasso CTF | B10 | ok | ok | ok | verificata |
-| 39 | CTF finale a squadre | B10 | - | - | - | da fare |
+| 39 | CTF finale a squadre | B10 | ok | ok | ok | verificata |
 | 40 | Debrief e valutazione | B10 | - | - | - | da fare |
 
 ## Note di avanzamento
