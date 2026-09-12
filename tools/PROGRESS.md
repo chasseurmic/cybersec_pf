@@ -29,7 +29,7 @@ in `tools/lezioni_src/lezNN.py`. Build con `python3 tools/build_lezioni.py`
 | 17 | File upload, path traversal e LFI | B4 | ok | ok | ok | verificata |
 | 18 | OWASP Top 10 e mini CTF web | B4 | ok | ok | ok | verificata |
 | 19 | Password: hash e salt | B5 | ok | ok | ok | verificata |
-| 20 | Cracking a dizionario, john e hashcat | B5 | - | - | - | da fare |
+| 20 | Cracking a dizionario, john e hashcat | B5 | ok | ok | ok | verificata |
 | 21 | Cifratura simmetrica e asimmetrica | B5 | - | - | - | da fare |
 | 22 | HTTPS e TLS, certificati | B5 | - | - | - | da fare |
 | 23 | TCP/IP e Wireshark | B6 | - | - | - | da fare |
