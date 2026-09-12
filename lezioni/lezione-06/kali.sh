@@ -100,6 +100,25 @@ fi
 EOF
 chmod 755 /usr/local/bin/lab06-verifica
 
+# 3b) Verificatore dello scanner scritto dallo studente (mio-scanner.sh)
+cat > /usr/local/bin/lab06-scanner <<'EOF'
+#!/usr/bin/env bash
+# Premia chi scrive il proprio mini scanner: deve trovare vivo il bersaglio.
+set -uo pipefail
+S="$HOME/lab/lezione-06/mio-scanner.sh"
+[ -f "$S" ] || { echo "[--] Non trovo $S. Scrivilo seguendo la dispensa (ciclo for + ping)."; exit 1; }
+echo "[*] Eseguo il tuo scanner (puo' metterci qualche secondo)..."
+out="$(timeout 90 bash "$S" 2>/dev/null)"
+if echo "$out" | grep -q '10\.10\.10\.20'; then
+  echo "[OK] Il tuo scanner ha trovato il bersaglio 10.10.10.20!"
+  echo "FLAG{il_mio_primo_scanner}"
+else
+  echo "[--] Il tuo scanner non ha elencato 10.10.10.20."
+  echo "     Controlla il ciclo for e l'if sul ping. Il bersaglio e' acceso?"
+fi
+EOF
+chmod 755 /usr/local/bin/lab06-scanner
+
 chown -R "$UTENTE:$UTENTE" "$HOME_UTENTE/lab" 2>/dev/null || true
 
 cat <<'MSG'
@@ -114,11 +133,17 @@ cat <<'MSG'
         bash saluta.sh
         lab06-verifica
 
- [ ] 2  Usa lo scanner per trovare il bersaglio               (+40)
-        cat scanner-host.sh        # leggi il codice, commentato
+ [ ] 2  Costruisci TU un mini scanner, passo passo             (+30)
+        # (segui la dispensa: prima un ping, poi il ciclo, poi l'if)
+        nano mio-scanner.sh
+        bash mio-scanner.sh        # e' sequenziale: sara' lentino, e' normale
+        lab06-scanner              # verifica che trovi 10.10.10.20
+
+ [ ] 3  Ora lo scanner PROFESSIONALE (gia' pronto)             (+15)
+        cat scanner-host.sh        # leggilo: e' parallelo, molto piu' veloce
         ./scanner-host.sh 10.10.10
 
- [ ] 3  Ripeti controllando anche la porta 8080               (+20)
+ [ ] 4  Con lo scanner pro, controlla anche la porta 8080      (+15)
         ./scanner-host.sh 10.10.10 8080
 
  Concetti:  variabili  $()  for  if  [ ... ]  exit code  &  wait  /dev/tcp

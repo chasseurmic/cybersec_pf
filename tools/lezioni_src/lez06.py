@@ -13,7 +13,7 @@ def dispensa(d):
         "**Al termine sai:** variabili, cicli `for`, condizioni `if`, sostituzione di "
         "comando `$(...)`, codici di uscita, esecuzione in parallelo, e leggere/scrivere "
         "uno script bash.",
-        "**Flag in palio:** 3 flag (70 punti).",
+        "**Flag in palio:** 4 flag (70 punti): scrivi TU un mini scanner, poi usa quello pronto.",
     ])
 
     d.h1("Parte 1 · Dare ordini in serie (teoria, 25 min)")
@@ -84,18 +84,57 @@ def dispensa(d):
         "lab06-verifica",
     ])
 
-    d.h2("Passo 2 · Trova il bersaglio (+40)")
-    d.p("Apri e leggi `scanner-host.sh`: e' commentato riga per riga. Poi lancialo sulla "
-        "rete del laboratorio. Deve trovare la tua Kali (`.5`) e il bersaglio (`.20`).")
+    d.h2("Passo 2 · Costruisci TU un mini scanner, passo passo (+30)")
+    d.p("Prima di usare lo strumento pronto, scrivilo tu, un pezzo alla volta. Cosi' "
+        "capisci davvero cosa fa. Crea il file `mio-scanner.sh` e costruiscilo in tre "
+        "mosse.")
+
+    d.h3("Mossa 1 · pingare UN host e capire se e' vivo")
+    d.p("`ping -c1` manda un solo pacchetto; il suo codice di uscita e' 0 se l'host "
+        "risponde. Con `if` decidi cosa stampare.")
     d.code([
-        "cat scanner-host.sh",
+        "#!/usr/bin/env bash",
+        "if ping -c1 -W1 10.10.10.20 >/dev/null 2>&1; then",
+        "  echo \"10.10.10.20 e' vivo\"",
+        "fi",
+    ])
+    d.p("Provalo: `bash mio-scanner.sh`. Se il bersaglio e' acceso, stampa la riga.")
+
+    d.h3("Mossa 2 · ripetere su tanti indirizzi con un ciclo for")
+    d.p("Invece di un solo IP, scorri gli ultimi numeri da 1 a 30 con una variabile.")
+    d.code([
+        "#!/usr/bin/env bash",
+        "for n in $(seq 1 30); do",
+        "  ip=\"10.10.10.$n\"",
+        "  if ping -c1 -W1 \"$ip\" >/dev/null 2>&1; then",
+        "    echo \"$ip e' vivo\"",
+        "  fi",
+        "done",
+    ])
+
+    d.h3("Mossa 3 · provarlo davvero")
+    d.p("Lancialo e verifica. Deve elencare la tua Kali (`.5`) e il bersaglio (`.20`). "
+        "Noterai che e' lentino: prova un indirizzo alla volta e aspetta ogni ping. "
+        "Tienilo a mente, al Passo 3 vedrai come si fa a renderlo veloce.")
+    d.code([
+        "bash mio-scanner.sh",
+        "lab06-scanner        # ti da' la flag se il tuo scanner trova 10.10.10.20",
+    ])
+
+    d.h2("Passo 3 · Lo scanner professionale (+15)")
+    d.p("Ora che sai come funziona, apri quello gia' pronto: fa la stessa cosa ma su "
+        "tutti i 254 indirizzi e in PARALLELO (lancia i ping insieme con `&` e aspetta con "
+        "`wait`), quindi finisce in un paio di secondi invece che in mezzo minuto.")
+    d.code([
+        "cat scanner-host.sh      # leggi le differenze: & , wait , /dev/tcp",
         "./scanner-host.sh 10.10.10",
     ])
-    d.p("Quando lo scanner individua `10.10.10.20`, ti consegna la flag.")
+    d.p("Quando individua `10.10.10.20`, ti consegna la flag. Confronta la velocita' con "
+        "il tuo mini scanner.")
 
-    d.h2("Passo 3 · Controlla anche una porta (+20)")
-    d.p("Lo scanner sa anche dire se una porta e' aperta, usando la funzione `/dev/tcp` "
-        "di bash. Rilancialo chiedendo la porta 8080.")
+    d.h2("Passo 4 · Controlla anche una porta (+15)")
+    d.p("Lo scanner pro sa anche dire se una porta e' aperta, usando la funzione "
+        "`/dev/tcp` di bash. Rilancialo chiedendo la porta 8080.")
     d.code(["./scanner-host.sh 10.10.10 8080"])
 
     d.h1("Parte 3 · Ribaltamento difensivo (15 min)")
@@ -113,9 +152,10 @@ def dispensa(d):
     d.h2("Punteggio della Lezione 6")
     d.table(["Obiettivo", "Come", "Punti"], [
         ["Primo script", "saluta.sh + lab06-verifica", "10"],
-        ["Trova il bersaglio", "scanner-host.sh 10.10.10", "40"],
-        ["Trova la porta aperta", "scanner-host.sh 10.10.10 8080", "20"],
-    ], widths=[4000, 3526, 1500])
+        ["Il TUO mini scanner", "mio-scanner.sh + lab06-scanner", "30"],
+        ["Scanner pro: trova il bersaglio", "scanner-host.sh 10.10.10", "15"],
+        ["Scanner pro: porta aperta", "scanner-host.sh 10.10.10 8080", "15"],
+    ], widths=[4200, 3326, 1500])
 
 
 def manuale(d):
@@ -123,22 +163,27 @@ def manuale(d):
         "**Lezione 6** · Bash scripting offensivo, host alive scanner (Blocco 2, lezione con tool).",
         "**Tempi:** 25 min teoria · 80 min pratica · 15 min difesa.",
         "**Prerequisiti:** Kali della Lezione 2; bersaglio acceso e raggiungibile.",
-        "**Deliverable studente:** 3 flag (70 punti) + uno strumento riutilizzabile.",
+        "**Deliverable studente:** 4 flag (70 punti). Lo studente scrive un mini scanner e poi usa quello pronto.",
     ])
 
     d.h1("Obiettivi didattici")
     d.bullets([
         "Passare dall'uso dei comandi alla loro automazione in script.",
-        "Costruire e capire uno strumento reale (ping sweep + controllo porta).",
-        "Introdurre la parallelizzazione (`&` + `wait`) e `/dev/tcp` di bash.",
+        "Far scrivere allo studente un mini scanner sequenziale (for + if + exit code), "
+        "passo passo, PRIMA di dargli lo strumento pronto.",
+        "Poi confrontarlo con lo scanner professionale: capire la parallelizzazione "
+        "(`&` + `wait`) e `/dev/tcp` di bash.",
     ])
 
     d.h1("Come funziona il lab")
     d.h2("kali.sh (sulla Kali)")
     d.bullets([
         "Crea `~/lab/lezione-06/` con `esempio.sh` (commentato) e `scanner-host.sh` (lo "
-        "strumento della lezione, con ping sweep parallelo e controllo porta via /dev/tcp).",
-        "Installa `/usr/local/bin/lab06-verifica` per il primo script.",
+        "strumento pronto, con ping sweep parallelo e controllo porta via /dev/tcp).",
+        "Lo studente scrive da solo `mio-scanner.sh` (sequenziale) seguendo la dispensa.",
+        "Installa `/usr/local/bin/lab06-verifica` (primo script) e "
+        "`/usr/local/bin/lab06-scanner` (esegue il mio-scanner dello studente e controlla "
+        "che trovi 10.10.10.20).",
         "Lo strumento vive dentro kali.sh (heredoc): e' cosi' che arriva sulla VM tramite "
         "`lab`, che scarica solo kali.sh/target.sh.",
     ])
@@ -152,9 +197,11 @@ def manuale(d):
     d.table(["Passo", "Soluzione", "Flag"], [
         ["1", "saluta.sh con for che stampa 'riga 1'..'riga 5' ; lab06-verifica",
          "FLAG{primo_script_bash}"],
-        ["2", "./scanner-host.sh 10.10.10 (trova 10.10.10.20)", "FLAG{ho_trovato_il_bersaglio}"],
-        ["3", "./scanner-host.sh 10.10.10 8080", "FLAG{porta_aperta_trovata}"],
-    ], widths=[900, 5626, 2500])
+        ["2", "mio-scanner.sh (for su seq 1 30 + if ping) che elenca 10.10.10.20 ; lab06-scanner",
+         "FLAG{il_mio_primo_scanner}"],
+        ["3", "./scanner-host.sh 10.10.10 (trova 10.10.10.20)", "FLAG{ho_trovato_il_bersaglio}"],
+        ["4", "./scanner-host.sh 10.10.10 8080", "FLAG{porta_aperta_trovata}"],
+    ], widths=[700, 5826, 2500])
 
     d.h1("Rigiocare e resettare")
     d.bullets([
