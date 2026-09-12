@@ -41,7 +41,7 @@ in `tools/lezioni_src/lezNN.py`. Build con `python3 tools/build_lezioni.py`
 | 29 | Pagina di phishing didattica | B7 | ok | ok | ok | verificata |
 | 30 | Riconoscere e difendersi dal phishing | B7 | ok | ok | ok | verificata |
 | 31 | Malware: tipi e ciclo di vita | B8 | ok | ok | ok | verificata |
-| 32 | Analisi statica di base in sandbox | B8 | - | - | - | da fare |
+| 32 | Analisi statica di base in sandbox | B8 | ok | ok | ok | verificata |
 | 33 | Ransomware didattico in sandbox | B8 | - | - | - | da fare |
 | 34 | Analisi dinamica e IOC | B8 | - | - | - | da fare |
 | 35 | Hardening di sistema | B9 | - | - | - | da fare |
