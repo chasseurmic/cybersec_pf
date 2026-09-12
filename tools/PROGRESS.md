@@ -45,7 +45,7 @@ in `tools/lezioni_src/lezNN.py`. Build con `python3 tools/build_lezioni.py`
 | 33 | Ransomware didattico in sandbox | B8 | - | - | - | SALTATA (richiesta docente) |
 | 34 | Analisi dinamica e IOC | B8 | ok | ok | ok | verificata |
 | 35 | Hardening di sistema | B9 | ok | ok | ok | verificata |
-| 36 | Log, monitoraggio e rilevamento | B9 | - | - | - | da fare |
+| 36 | Log, monitoraggio e rilevamento | B9 | ok | ok | ok | verificata |
 | 37 | Incident response di base | B9 | - | - | - | da fare |
 | 38 | Preparazione e ripasso CTF | B10 | - | - | - | da fare |
 | 39 | CTF finale a squadre | B10 | - | - | - | da fare |
