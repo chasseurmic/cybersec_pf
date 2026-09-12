@@ -39,7 +39,7 @@ in `tools/lezioni_src/lezNN.py`. Build con `python3 tools/build_lezioni.py`
 | 27 | Difese di rete (firewall, IDS) | B6 | ok | ok | ok | verificata |
 | 28 | Social engineering, principi e casi | B7 | ok | ok | ok | verificata |
 | 29 | Pagina di phishing didattica | B7 | ok | ok | ok | verificata |
-| 30 | Riconoscere e difendersi dal phishing | B7 | - | - | - | da fare |
+| 30 | Riconoscere e difendersi dal phishing | B7 | ok | ok | ok | verificata |
 | 31 | Malware: tipi e ciclo di vita | B8 | - | - | - | da fare |
 | 32 | Analisi statica di base in sandbox | B8 | - | - | - | da fare |
 | 33 | Ransomware didattico in sandbox | B8 | - | - | - | da fare |
