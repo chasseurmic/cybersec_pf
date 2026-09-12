@@ -25,7 +25,7 @@ in `tools/lezioni_src/lezNN.py`. Build con `python3 tools/build_lezioni.py`
 | 13 | SQL injection avanzata e sqlmap | B4 | ok | ok | ok | verificata |
 | 14 | XSS reflected e stored | B4 | ok | ok | ok | verificata |
 | 15 | Autenticazione, cookie e sessioni | B4 | ok | ok | ok | verificata |
-| 16 | Brute force del login e difesa | B4 | - | - | - | da fare |
+| 16 | Brute force del login e difesa | B4 | ok | ok | ok | verificata |
 | 17 | File upload, path traversal e LFI | B4 | - | - | - | da fare |
 | 18 | OWASP Top 10 e mini CTF web | B4 | - | - | - | da fare |
 | 19 | Password: hash e salt | B5 | - | - | - | da fare |
