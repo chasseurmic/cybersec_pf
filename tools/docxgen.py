@@ -256,6 +256,15 @@ class Doc:
             '<w:spacing w:after="120" w:before="60"/></w:pPr>%s</w:p>'
             % (CODE_BG, CODE_BG, CODE_BG, CODE_BG, CODE_BG, "".join(runs)))
 
+    # ---- scheda comandi (comando + descrizione e flag) ----------------------
+    def cmdref(self, rows, titolo="Comandi nuovi di questa parte"):
+        """rows: lista di (comando, descrizione_con_flag).
+        Il comando va passato gia' con i backtick, es. ('`grep`', 'Filtra ...')."""
+        if titolo:
+            self.h3(titolo)
+        self.table(["Comando", "Cosa fa e flag principali"], rows,
+                   widths=[2200, 6826])
+
     # ---- tabella a righe alternate ------------------------------------------
     def table(self, headers, rows, widths=None):
         n = len(headers)

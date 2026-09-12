@@ -65,12 +65,15 @@ def dispensa(d):
         ["`grep -r parola cartella/`", "cerca dentro tutti i file di una cartella"],
         ["`grep -rl parola cartella/`", "elenca solo i NOMI dei file che la contengono"],
         ["`cut -d' ' -f1`", "taglia e tiene il primo campo (separatore: spazio)"],
-        ["`sort`", "mette le righe in ordine"],
+        ["`sort`", "mette le righe in ordine (alfabetico)"],
         ["`sort -u`", "ordina e toglie i doppioni"],
-        ["`uniq -c`", "conta le righe uguali consecutive (dopo sort)"],
-        ["`wc -l`", "conta le righe"],
-        ["`head` / `tail`", "mostra le prime / le ultime righe"],
-    ], widths=[3000, 6026])
+        ["`sort -rn`", "ordine numerico (`n`) e inverso (`r`): dal piu' grande al piu' piccolo"],
+        ["`uniq -c`", "conta le righe uguali consecutive (va usato DOPO `sort`)"],
+        ["`wc -l`", "conta le righe (`-l` = lines)"],
+        ["`head` / `tail`", "mostra le prime / le ultime righe (`-n N` per sceglierne N)"],
+        ["`tr ' ' '\\n'`", "traduce/ sostituisce caratteri: qui cambia ogni spazio in un "
+                           "a-capo, cosi' ogni parola va su una riga"],
+    ], widths=[2600, 6426])
     d.box("blu", "La combo che smaschera lo scanner", intro=(
         "Questa catena e' un classico del mestiere: prende gli IP dal log, li ordina, "
         "li conta e mette in cima chi ha fatto piu' richieste."), items=[

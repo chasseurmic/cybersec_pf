@@ -40,6 +40,13 @@ def dispensa(d):
         "leggibile solo da root. Un dettaglio che tradisce: un utente di servizio "
         "dovrebbe avere shell `/usr/sbin/nologin`; se ne ha una di login (`/bin/bash`), "
         "e' un campanello d'allarme.")
+    d.cmdref([
+        ("`whoami`", "Il nome dell'utente con cui sei collegato."),
+        ("`id`", "UID, GID e gruppi a cui appartieni (quanti poteri hai)."),
+        ("`cat /etc/passwd`", "Elenco di tutti gli utenti (7 campi separati da `:`)."),
+        ("`getent passwd`", "Come sopra, ma include anche utenti da fonti esterne; comodo "
+                            "con i filtri, es. `getent passwd | grep -v nologin`."),
+    ])
 
     d.h2("Processi")
     d.p("Un processo e' un programma in esecuzione, con un numero (PID). `ps aux` li "
@@ -51,6 +58,13 @@ def dispensa(d):
         "ps aux | grep -i pass   # cerca eventuali password negli argomenti",
         "top                 # processi in tempo reale (q per uscire)",
     ])
+    d.cmdref([
+        ("`ps aux`", "Elenca tutti i processi (`a` tutti gli utenti, `u` formato "
+                     "leggibile, `x` anche quelli senza terminale). La 2a colonna e' il PID."),
+        ("`top`", "Processi in tempo reale, ordinati per uso di CPU. `q` per uscire."),
+        ("`pgrep`", "Trova il PID di un processo dal nome. `-f` cerca nell'intera riga di "
+                    "comando, es. `pgrep -f finto-daemon`."),
+    ])
 
     d.h2("Servizi e porte")
     d.p("Un servizio e' un programma che parte da solo e resta in ascolto (per esempio "
@@ -60,6 +74,16 @@ def dispensa(d):
         "systemctl status ssh     # stato di un servizio",
         "ss -tlnp                 # porte TCP in ascolto e chi le tiene",
         "sudo -l                  # cosa posso eseguire come root",
+    ])
+    d.cmdref([
+        ("`systemctl`", "Gestisce i servizi. `systemctl status <nome>` mostra lo stato; "
+                        "accetta anche un PID: `systemctl status <PID>` dice a quale "
+                        "servizio appartiene un processo."),
+        ("`ss`", "Mostra le connessioni di rete. `-t` TCP, `-l` in ascolto, `-n` numeri "
+                 "(niente risoluzione dei nomi), `-p` il processo che tiene la porta. "
+                 "Insieme: `ss -tlnp`."),
+        ("`sudo -l`", "Elenca cosa il tuo utente puo' eseguire come root: una regola troppo "
+                      "larga qui e' una via per l'escalation dei privilegi."),
     ])
 
     d.h1("Parte 2 · Enumerazione sul bersaglio (pratica, 80 min)")
@@ -74,6 +98,12 @@ def dispensa(d):
         "cat /etc/passwd | column -t -s:",
         "grep bash /etc/passwd            # chi ha /bin/bash",
         "grep backup /etc/passwd          # guarda il campo commento",
+    ])
+    d.cmdref([
+        ("`column`", "Incolonna un testo per renderlo leggibile. `-t` crea la tabella, "
+                     "`-s:` usa i due punti come separatore (utile per /etc/passwd)."),
+        ("`grep`", "Filtra le righe che contengono una parola. `-i` ignora maiuscole, "
+                   "`-v` mostra le righe che NON la contengono."),
     ])
 
     d.h2("Passo 2 · La password nel processo (+20)")

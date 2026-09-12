@@ -67,6 +67,19 @@ def dispensa(d):
         "wait",
     ])
 
+    d.cmdref([
+        ("`nano`", "Editor di testo semplice nel terminale, per scrivere gli script. Si "
+                   "salva con Ctrl+O e Invio, si esce con Ctrl+X."),
+        ("`chmod +x`", "Rende un file eseguibile, cosi' puoi lanciarlo con `./nome.sh`. In "
+                       "alternativa: `bash nome.sh` (non serve renderlo eseguibile)."),
+        ("`seq`", "Genera una sequenza di numeri: `seq 1 254` stampa 1, 2, ... 254. Serve a "
+                  "far girare un ciclo `for`."),
+        ("`ping`", "Verifica se un host risponde. `-c1` un solo pacchetto, `-W1` aspetta al "
+                   "massimo 1 secondo (senza si perderebbe troppo tempo sugli host spenti)."),
+        ("`&` e `wait`", "`&` avvia un comando in background (in parallelo); `wait` aspetta "
+                         "che tutti i comandi lanciati cosi' abbiano finito."),
+    ], titolo="I comandi nuovi di oggi")
+
     d.h1("Parte 2 · Costruisci lo scanner (pratica, 80 min)")
     d.p("Sulla Kali `lab 6` prepara la cartella `~/lab/lezione-06` con un esempio "
         "commentato e lo strumento `scanner-host.sh`. Sul bersaglio `lab 6` garantisce "
