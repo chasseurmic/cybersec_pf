@@ -28,77 +28,100 @@ printf 'PasswordAuthentication yes\n' > /etc/ssh/sshd_config.d/99-lab.conf
 systemctl enable --now ssh >/dev/null 2>&1 || systemctl enable --now sshd >/dev/null 2>&1 || true
 systemctl restart ssh >/dev/null 2>&1 || systemctl restart sshd >/dev/null 2>&1 || true
 
-# 3) Dataset dell'azienda (ripulito e ricreato a ogni run)
+# 3) Dataset dell'azienda (ripulito e ricreato a ogni run).
+#    Lo generiamo con python3 (sempre presente su Ubuntu): e' robusto e non
+#    dipende da array bash, RANDOM o shuf, che su alcuni target lasciavano il
+#    log vuoto.
 BASE=/srv/azienda
 rm -rf "$BASE"
 mkdir -p "$BASE/logs" "$BASE/documenti"
 
-SCANNER_IP="10.10.10.66"      # l'IP che "martella" il server (lo scanner)
-FLAG_LOG="FLAG{le_pipe_scavano_nei_log}"
-FLAG_DOC="FLAG{un_file_su_mille}"
-FLAG_IP="FLAG{ho_trovato_lo_scanner}"
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "[!] python3 non trovato: e' richiesto per generare il dataset."; exit 1
+fi
 
-# 3a) access.log in stile web: molte righe "normali" e un IP che scansiona
-LOG="$BASE/logs/access.log"
-: > "$LOG"
-PAGINE=(/ /home /login /style.css /logo.png /chi-siamo /contatti /prodotti /faq)
-IP_NORMALI=(10.10.10.31 10.10.10.42 10.10.10.55 10.10.10.7 10.10.10.88)
-# ~600 richieste normali (200 come 404 sparsi)
-for i in $(seq 1 600); do
-  ip="${IP_NORMALI[$((RANDOM % ${#IP_NORMALI[@]}))]}"
-  pg="${PAGINE[$((RANDOM % ${#PAGINE[@]}))]}"
-  code=200; [ $((RANDOM % 8)) -eq 0 ] && code=404
-  echo "$ip - - [12/Sep/2026:10:$((RANDOM%60)):$((RANDOM%60)) +0200] \"GET $pg HTTP/1.1\" $code $((RANDOM%3000))" >> "$LOG"
-done
+python3 - "$BASE" <<'PY'
+import os, random, sys
+base = sys.argv[1]
+random.seed(42)                         # dataset stabile e riproducibile
+SCANNER_IP = "10.10.10.66"
+FLAG_LOG = "FLAG{le_pipe_scavano_nei_log}"
+FLAG_DOC = "FLAG{un_file_su_mille}"
+FLAG_IP  = "FLAG{ho_trovato_lo_scanner}"
+
+pagine = ["/", "/home", "/login", "/style.css", "/logo.png",
+          "/chi-siamo", "/contatti", "/prodotti", "/faq"]
+ip_normali = ["10.10.10.31", "10.10.10.42", "10.10.10.55", "10.10.10.7", "10.10.10.88"]
+scanpath = ["/admin", "/wp-login.php", "/.env", "/backup.zip", "/config.php",
+            "/phpmyadmin", "/.git/config", "/server-status", "/shell.php", "/old"]
+
+righe = []
+# ~600 richieste normali (una parte come 404 sparsi)
+for _ in range(600):
+    ip = random.choice(ip_normali)
+    pg = random.choice(pagine)
+    code = 404 if random.randint(0, 7) == 0 else 200
+    righe.append('%s - - [12/Sep/2026:10:%02d:%02d +0200] "GET %s HTTP/1.1" %d %d'
+                 % (ip, random.randint(0, 59), random.randint(0, 59), pg, code,
+                    random.randint(0, 2999)))
 # ~450 richieste dello SCANNER: quasi tutte 404 su percorsi da attaccante
-SCANPATH=(/admin /wp-login.php /.env /backup.zip /config.php /phpmyadmin /.git/config /server-status /shell.php /old)
-for i in $(seq 1 450); do
-  pg="${SCANPATH[$((RANDOM % ${#SCANPATH[@]}))]}"
-  echo "$SCANNER_IP - - [12/Sep/2026:11:$((RANDOM%60)):$((RANDOM%60)) +0200] \"GET $pg HTTP/1.1\" 404 0" >> "$LOG"
-done
-# 3b) la riga con il SEGRETO (flag da trovare con grep nel log)
-echo "10.10.10.42 - - [12/Sep/2026:11:59:59 +0200] \"GET /note?SEGRETO=$FLAG_LOG HTTP/1.1\" 200 42" >> "$LOG"
-# mescola le righe
-shuf "$LOG" -o "$LOG"
+for _ in range(450):
+    pg = random.choice(scanpath)
+    righe.append('%s - - [12/Sep/2026:11:%02d:%02d +0200] "GET %s HTTP/1.1" 404 0'
+                 % (SCANNER_IP, random.randint(0, 59), random.randint(0, 59), pg))
+# la riga col SEGRETO (flag da trovare con grep nel log)
+righe.append('10.10.10.42 - - [12/Sep/2026:11:59:59 +0200] '
+             '"GET /note?SEGRETO=%s HTTP/1.1" 200 42' % FLAG_LOG)
+random.shuffle(righe)
 
-# 3c) file dell'IP scanner: lo si legge SOLO dopo averlo scoperto con le pipe
-cat > "$BASE/ip-$SCANNER_IP.txt" <<EOF
-Questo IP ha fatto piu' richieste di tutti, quasi tutte errori 404:
-e' uno scanner automatico che cerca pagine di amministrazione.
-$FLAG_IP
-EOF
+with open(os.path.join(base, "logs", "access.log"), "w") as f:
+    f.write("\n".join(righe) + "\n")
 
-# 4) 200 documenti: quasi tutti innocui, UNO contiene una password
-for n in $(seq -w 1 200); do
-  cat > "$BASE/documenti/nota-$n.txt" <<EOF
-Nota interna numero $n
-Promemoria riunione, nessun dato sensibile qui.
-Riga di riempimento $((RANDOM)).
-EOF
-done
-cat > "$BASE/documenti/nota-137.txt" <<EOF
-Nota interna numero 137
-Appunto del tecnico: credenziali del vecchio pannello.
-password=Autunno2021!
-$FLAG_DOC
-EOF
+# file dell'IP scanner: lo si legge SOLO dopo averlo scoperto con le pipe
+with open(os.path.join(base, "ip-%s.txt" % SCANNER_IP), "w") as f:
+    f.write("Questo IP ha fatto piu' richieste di tutti, quasi tutte errori 404:\n"
+            "e' uno scanner automatico che cerca pagine di amministrazione.\n"
+            + FLAG_IP + "\n")
 
-# 5) CSV utenti (materiale per cut/sort/uniq)
-cat > "$BASE/utenti.csv" <<'EOF'
-nome,email,reparto
-Anna Rossi,anna.rossi@scuola.local,IT
-Luca Bianchi,luca.bianchi@scuola.local,Amministrazione
-Sara Verdi,sara.verdi@scuola.local,IT
-Marco Neri,marco.neri@scuola.local,Direzione
-Giulia Gialli,giulia.gialli@scuola.local,IT
-Paolo Blu,paolo.blu@scuola.local,Amministrazione
-EOF
+# 200 documenti: quasi tutti innocui, UNO contiene una password
+docs = os.path.join(base, "documenti")
+for n in range(1, 201):
+    with open(os.path.join(docs, "nota-%03d.txt" % n), "w") as f:
+        f.write("Nota interna numero %03d\n"
+                "Promemoria riunione, nessun dato sensibile qui.\n"
+                "Riga di riempimento %d.\n" % (n, random.randint(0, 99999)))
+with open(os.path.join(docs, "nota-137.txt"), "w") as f:
+    f.write("Nota interna numero 137\n"
+            "Appunto del tecnico: credenziali del vecchio pannello.\n"
+            "password=Autunno2021!\n" + FLAG_DOC + "\n")
 
-# 6) permessi: tutto leggibile dall'ospite, cartelle attraversabili
+# CSV utenti (materiale per cut/sort/uniq)
+with open(os.path.join(base, "utenti.csv"), "w") as f:
+    f.write("nome,email,reparto\n"
+            "Anna Rossi,anna.rossi@scuola.local,IT\n"
+            "Luca Bianchi,luca.bianchi@scuola.local,Amministrazione\n"
+            "Sara Verdi,sara.verdi@scuola.local,IT\n"
+            "Marco Neri,marco.neri@scuola.local,Direzione\n"
+            "Giulia Gialli,giulia.gialli@scuola.local,IT\n"
+            "Paolo Blu,paolo.blu@scuola.local,Amministrazione\n")
+
+print("[*] Dataset generato: %d righe di log, 200 documenti, utenti.csv"
+      % len(righe))
+PY
+
+# 4) permessi: tutto leggibile dall'ospite, cartelle attraversabili
 chown -R studente:studente "$BASE"
 chmod -R a+rX "$BASE"
 
-# 7) Verificatore del passo con la redirezione su file (flag bonus)
+# 5) Verifica: il log deve avere contenuto
+RIGHE="$(wc -l < "$BASE/logs/access.log" 2>/dev/null || echo 0)"
+if [ "$RIGHE" -lt 100 ]; then
+  echo "[!] Attenzione: access.log ha solo $RIGHE righe. Controlla python3 sul target."
+else
+  echo "[OK] access.log generato con $RIGHE righe."
+fi
+
+# 6) Verificatore del passo con la redirezione su file (flag bonus)
 cat > /usr/local/bin/lab04-verifica <<'EOF'
 #!/usr/bin/env bash
 # Premia chi salva su ~/report.txt l'elenco ORDINATO e SENZA DOPPIONI degli IP
