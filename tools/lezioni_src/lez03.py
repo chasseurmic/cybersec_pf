@@ -8,10 +8,10 @@ def dispensa(d):
     d.box("blu", "In breve", [
         "**Durata:** 2 ore.  Struttura: 25 min teoria · 80 min pratica · 15 min difesa.",
         "**Obiettivo:** entrare nel bersaglio via SSH ed esplorarne il filesystem, "
-        "trovando le cose lasciate in giro per sbaglio e capendo perche' un file resta 'un "
+        "trovando le cose lasciate in giro per sbaglio e capendo perché un file resta 'un "
         "muro' che non riesci a leggere.",
         "**Al termine sai:** muoverti tra le cartelle, leggere file, trovarli con `find` e "
-        "`grep`, e leggere i permessi rwx capendo perche' bloccano o espongono i dati.",
+        "`grep`, e leggere i permessi rwx capendo perché bloccano o espongono i dati.",
         "**Flag in palio:** 5 flag + 1 bonus difensivo (70 punti).",
     ])
 
@@ -19,20 +19,20 @@ def dispensa(d):
 
     d.h2("Il caso reale")
     d.p("Un attaccante entra in un server con un account qualsiasi: un utente rubato, un "
-        "vecchio account ospite mai cancellato. Non e' amministratore. Cosa fa? Gira per le "
+        "vecchio account ospite mai cancellato. Non è amministratore. Cosa fa? Gira per le "
         "cartelle e guarda: un backup di password dimenticato, un file di configurazione con "
         "dentro le credenziali, un documento riservato reso leggibile a tutti per sbaglio. "
-        "Moltissime violazioni reali nascono cosi', non da un exploit sofisticato ma da un "
+        "Moltissime violazioni reali nascono così, non da un exploit sofisticato ma da un "
         "file con i permessi sbagliati. Oggi facciamo questo mestiere.")
 
     d.h2("Il filesystem: un grande palazzo")
-    d.p("In Linux tutto parte da una sola radice, la cartella `/`. Da li' si diramano tutte "
+    d.p("In Linux tutto parte da una sola radice, la cartella `/`. Da lì si diramano tutte "
         "le altre, come i piani e le stanze di un palazzo.")
     d.table(["Cartella", "Cosa contiene"], [
-        ["/home", "gli 'appartamenti' degli utenti: /home/studente e' casa tua"],
+        ["/home", "gli 'appartamenti' degli utenti: /home/studente è casa tua"],
         ["/etc", "la sala quadri: i file di configurazione del sistema"],
         ["/var", "il magazzino: dati che cambiano, log, siti web"],
-        ["/srv", "i dati 'serviti' dalla macchina. Qui oggi c'e' il tesoro"],
+        ["/srv", "i dati 'serviti' dalla macchina. Qui oggi c'è il tesoro"],
         ["/root", "l'attico del capo: la home dell'amministratore. Vietato agli altri"],
         ["/tmp", "il cestino condiviso: file temporanei di tutti"],
     ], widths=[2000, 7026])
@@ -47,12 +47,12 @@ def dispensa(d):
     d.h2("I file nascosti")
     d.p("I nomi che iniziano con un punto (per esempio `.diario`) non compaiono con `ls`. "
         "Servono a non ingombrare la vista, non per sicurezza: basta `ls -a` per vederli "
-        "tutti. **Nascondere non e' proteggere.**")
+        "tutti. **Nascondere non è proteggere.**")
 
-    d.h2("I permessi: chi puo' fare cosa")
+    d.h2("I permessi: chi può fare cosa")
     d.p("Ogni file ha un proprietario, un gruppo e tre terzine di permessi: una per il "
         "proprietario (user), una per il gruppo (group), una per tutti gli altri (other). "
-        "Ogni terzina dice se si puo' leggere (r), scrivere (w), eseguire (x).")
+        "Ogni terzina dice se si può leggere (r), scrivere (w), eseguire (x).")
     d.p("Anatomia di una riga di `ls -l`:")
     d.code(["-rw-r--r--  1  root  root  842  12 set  config.old"])
     d.table(["Simboli", "Numero", "Significato"], [
@@ -64,10 +64,10 @@ def dispensa(d):
         ["r--", "4", "sola lettura"],
     ], widths=[2000, 1600, 5426])
     d.p("Quindi `chmod 644 file` vuol dire: proprietario `rw-` (6), gruppo e altri `r--` "
-        "(4 e 4). E `600` vuol dire: solo il proprietario legge e scrive, nessun altro puo' "
+        "(4 e 4). E `600` vuol dire: solo il proprietario legge e scrive, nessun altro può "
         "nulla. La chiave di oggi: se 'altri' ha la `r` su un segreto, chiunque lo legge "
-        "(la vulnerabilita' che cercheremo); se e' `600`, solo il proprietario lo legge "
-        "(il muro che ci fermera').")
+        "(la vulnerabilità che cercheremo); se è `600`, solo il proprietario lo legge "
+        "(il muro che ci fermerà).")
 
     d.h1("Parte 2 · La caccia al tesoro (pratica, 80 min)")
     d.p("Preparazione: sul bersaglio si lancia una volta `lab 3` (semina la caccia), poi "
@@ -75,12 +75,12 @@ def dispensa(d):
         "bersaglio, dopo esserci entrati via SSH.")
 
     d.h2("Passo 0 · Entrare nel bersaglio (SSH)")
-    d.p("SSH e' come aprire un terminale su un altro computer, a distanza. Per oggi il "
+    d.p("SSH è come aprire un terminale su un altro computer, a distanza. Per oggi il "
         "bersaglio ci lascia entrare con un utente ospite.")
     d.cmdref([
         ("`ssh`", "Apre una sessione su una macchina remota. Sintassi: `ssh utente@indirizzo`. "
                   "La prima volta chiede di fidarti (scrivi `yes`); poi la password (mentre "
-                  "la digiti non si vede niente, e' normale)."),
+                  "la digiti non si vede niente, è normale)."),
     ], titolo="Il comando per entrare")
     d.code([
         "ssh studente@10.10.10.20        # password: studente",
@@ -104,7 +104,7 @@ def dispensa(d):
     d.p("Leggi la prima flag nel file di benvenuto.")
 
     d.h2("Passo 2 · I file nascosti (+10)")
-    d.p("Con `ls -a` compaiono i file col punto davanti. Uno e' un diario nascosto.")
+    d.p("Con `ls -a` compaiono i file col punto davanti. Uno è un diario nascosto.")
     d.code([
         "ls -a",
         "cat .diario_nascosto",
@@ -124,12 +124,12 @@ def dispensa(d):
         "grep -r FLAG /srv 2>/dev/null",
         "cat /srv/dati/reparto-IT/archivio/2021/config.old",
     ])
-    d.p("Segui la pista e leggi il file dimenticato: dentro c'e' la flag.")
+    d.p("Segui la pista e leggi il file dimenticato: dentro c'è la flag.")
 
     d.h2("Passo 4 · Un permesso di troppo (+15)")
-    d.p("Guarda `password_backup.txt`: e' di root, ma l'ultima terzina ('altri') ha la "
+    d.p("Guarda `password_backup.txt`: è di root, ma l'ultima terzina ('altri') ha la "
         "`r`, quindi lo leggi anche tu. Un backup di credenziali leggibile da chiunque: "
-        "ecco la vulnerabilita'.")
+        "ecco la vulnerabilità.")
     d.code([
         "cd /srv/dati/reparto-IT",
         "ls -l",
@@ -138,17 +138,17 @@ def dispensa(d):
 
     d.h2("Passo 5 · Il muro (+10)")
     d.p("Questa volta ricevi `Permission denied`. Guarda i permessi: `-rw-------` root "
-        "root. La terzina 'altri' e' vuota (`---`): non hai nessun diritto. Qui i permessi "
-        "fanno il loro dovere. Non c'e' una flag da leggere: riporta al docente la riga di "
-        "`ls -l` e spiega PERCHE' sei bloccato.")
+        "root. La terzina 'altri' è vuota (`---`): non hai nessun diritto. Qui i permessi "
+        "fanno il loro dovere. Non c'è una flag da leggere: riporta al docente la riga di "
+        "`ls -l` e spiega PERCHÉ sei bloccato.")
     d.code([
         "cd /srv/dati/direzione",
         "ls -l",
-        "cat stipendi.csv        # Permission denied: e' il muro",
+        "cat stipendi.csv        # Permission denied: è il muro",
     ])
 
     d.h2("Bonus · Metti in sicurezza la TUA password (+10)")
-    d.p("Torna a casa: il tuo `mia_password.txt` e' `644`, leggibile da tutti. Chiudilo.")
+    d.p("Torna a casa: il tuo `mia_password.txt` è `644`, leggibile da tutti. Chiudilo.")
     d.cmdref([
         ("`chmod`", "Cambia i permessi di un file. `chmod 600 file` = solo il proprietario "
                     "legge e scrive. `chmod 644` = proprietario rw, tutti gli altri sola "
@@ -160,25 +160,25 @@ def dispensa(d):
         "cd ~",
         "ls -l mia_password.txt        # -rw-r--r--  : lo leggono tutti",
         "chmod 600 mia_password.txt    # solo tu",
-        "ls -l mia_password.txt        # -rw-------  : ora e' chiuso",
+        "ls -l mia_password.txt        # -rw-------  : ora è chiuso",
         "caccia-verifica",
     ])
 
     d.h1("Parte 3 · Ribaltamento difensivo (15 min)")
     d.h2("Il principio del minimo privilegio")
-    d.p("Riguarda il Passo 4: il file era la vulnerabilita'. Doveva essere `600`, era "
+    d.p("Riguarda il Passo 4: il file era la vulnerabilità. Doveva essere `600`, era "
         "`644`. Nessuno lo ha 'bucato': era semplicemente aperto. La regola che lo avrebbe "
         "evitato si chiama minimo privilegio: dai a ciascuno solo i permessi che gli "
-        "servono, niente di piu'.")
+        "servono, niente di più.")
     d.box("verde", "Regole del difensore", items=[
         "I segreti (password, chiavi, backup) vanno a `600` o `400`: solo il proprietario.",
-        "Non lasciare backup di password in cartelle condivise: e' il regalo piu' grande "
+        "Non lasciare backup di password in cartelle condivise: è il regalo più grande "
         "per un attaccante.",
         "Il difensore usa gli stessi comandi per trovare i buchi PRIMA: es. "
         "`find /srv -type f -perm -o=r` elenca i file leggibili da 'altri'.",
     ])
-    d.p("Oggi hai visto la lezione piu' importante di tutte: spesso non serve bucare "
-        "niente, basta guardare bene. La difesa e' ordine e disciplina sui permessi.")
+    d.p("Oggi hai visto la lezione più importante di tutte: spesso non serve bucare "
+        "niente, basta guardare bene. La difesa è ordine e disciplina sui permessi.")
 
     d.h2("Punteggio della Lezione 3")
     d.table(["Obiettivo", "Prova", "Punti"], [
@@ -222,6 +222,6 @@ def manuale(d):
         ["rigiocare/azzerare", "rilanciare `lab 3` sul bersaglio (idempotente)"],
     ], widths=[3200, 5826])
     d.h1("Nota didattica")
-    d.p("E' la lezione chiave del blocco Linux: il messaggio 'nascondere non e' proteggere' "
-        "e il minimo privilegio tornano per tutto il corso. Il Passo 5 (il muro) non da' "
-        "flag di proposito: si valuta la spiegazione del perche' l'accesso e' negato.")
+    d.p("È la lezione chiave del blocco Linux: il messaggio 'nascondere non è proteggere' "
+        "e il minimo privilegio tornano per tutto il corso. Il Passo 5 (il muro) non dà "
+        "flag di proposito: si valuta la spiegazione del perché l'accesso è negato.")

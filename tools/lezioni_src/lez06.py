@@ -21,12 +21,12 @@ def dispensa(d):
     d.h2("Il caso reale")
     d.p("Un attaccante che deve controllare 254 indirizzi non li prova a mano uno per "
         "uno: scrive tre righe di bash e lascia lavorare il computer. Gli strumenti "
-        "famosi (nmap e compagnia) sono nati cosi', da qualcuno che ha automatizzato un "
-        "gesto ripetitivo. Oggi fai lo stesso: costruisci il tuo scanner. Capire come e' "
-        "fatto dentro vale piu' che usarne uno pronto senza sapere cosa fa.")
+        "famosi (nmap e compagnia) sono nati così, da qualcuno che ha automatizzato un "
+        "gesto ripetitivo. Oggi fai lo stesso: costruisci il tuo scanner. Capire come è "
+        "fatto dentro vale più che usarne uno pronto senza sapere cosa fa.")
 
     d.h2("Un vero script")
-    d.p("Uno script e' un file di testo con dei comandi. La prima riga, lo shebang, dice "
+    d.p("Uno script è un file di testo con dei comandi. La prima riga, lo shebang, dice "
         "quale interprete usare. Poi lo rendi eseguibile e lo lanci.")
     d.code([
         "#!/usr/bin/env bash",
@@ -56,7 +56,7 @@ def dispensa(d):
         "comandi si basano proprio su quel codice.")
 
     d.h2("Come funziona un ping sweep")
-    d.p("Per scoprire chi e' vivo in una rete /24 basta pingare tutti gli indirizzi da "
+    d.p("Per scoprire chi è vivo in una rete /24 basta pingare tutti gli indirizzi da "
         "`.1` a `.254`. Se pingassimo uno alla volta ci vorrebbero minuti; lanciando i "
         "ping in parallelo (con `&`) e aspettando con `wait`, si finisce in un paio di "
         "secondi.")
@@ -70,14 +70,14 @@ def dispensa(d):
     d.cmdref([
         ("`nano`", "Editor di testo semplice nel terminale, per scrivere gli script. Si "
                    "salva con Ctrl+O e Invio, si esce con Ctrl+X."),
-        ("`chmod +x`", "Rende un file eseguibile, cosi' puoi lanciarlo con `./nome.sh`. In "
+        ("`chmod +x`", "Rende un file eseguibile, così puoi lanciarlo con `./nome.sh`. In "
                        "alternativa: `bash nome.sh` (non serve renderlo eseguibile)."),
         ("`seq`", "Genera una sequenza di numeri: `seq 1 254` stampa 1, 2, ... 254. Serve a "
                   "far girare un ciclo `for`."),
         ("`ping`", "Verifica se un host risponde. `-c1` un solo pacchetto, `-W1` aspetta al "
                    "massimo 1 secondo (senza si perderebbe troppo tempo sugli host spenti)."),
         ("`&` e `wait`", "`&` avvia un comando in background (in parallelo); `wait` aspetta "
-                         "che tutti i comandi lanciati cosi' abbiano finito."),
+                         "che tutti i comandi lanciati così abbiano finito."),
     ], titolo="I comandi nuovi di oggi")
 
     d.h1("Parte 2 · Costruisci lo scanner (pratica, 80 min)")
@@ -98,20 +98,20 @@ def dispensa(d):
     ])
 
     d.h2("Passo 2 · Costruisci TU un mini scanner, passo passo (+30)")
-    d.p("Prima di usare lo strumento pronto, scrivilo tu, un pezzo alla volta. Cosi' "
+    d.p("Prima di usare lo strumento pronto, scrivilo tu, un pezzo alla volta. Così "
         "capisci davvero cosa fa. Crea il file `mio-scanner.sh` e costruiscilo in tre "
         "mosse.")
 
-    d.h3("Mossa 1 · pingare UN host e capire se e' vivo")
-    d.p("`ping -c1` manda un solo pacchetto; il suo codice di uscita e' 0 se l'host "
+    d.h3("Mossa 1 · pingare UN host e capire se è vivo")
+    d.p("`ping -c1` manda un solo pacchetto; il suo codice di uscita è 0 se l'host "
         "risponde. Con `if` decidi cosa stampare.")
     d.code([
         "#!/usr/bin/env bash",
         "if ping -c1 -W1 10.10.10.20 >/dev/null 2>&1; then",
-        "  echo \"10.10.10.20 e' vivo\"",
+        "  echo \"10.10.10.20 è vivo\"",
         "fi",
     ])
-    d.p("Provalo: `bash mio-scanner.sh`. Se il bersaglio e' acceso, stampa la riga.")
+    d.p("Provalo: `bash mio-scanner.sh`. Se il bersaglio è acceso, stampa la riga.")
 
     d.h3("Mossa 2 · ripetere su tanti indirizzi con un ciclo for")
     d.p("Invece di un solo IP, scorri gli ultimi numeri da 1 a 30 con una variabile.")
@@ -120,45 +120,45 @@ def dispensa(d):
         "for n in $(seq 1 30); do",
         "  ip=\"10.10.10.$n\"",
         "  if ping -c1 -W1 \"$ip\" >/dev/null 2>&1; then",
-        "    echo \"$ip e' vivo\"",
+        "    echo \"$ip è vivo\"",
         "  fi",
         "done",
     ])
 
     d.h3("Mossa 3 · provarlo davvero")
     d.p("Lancialo e verifica. Deve elencare la tua Kali (`.5`) e il bersaglio (`.20`). "
-        "Noterai che e' lentino: prova un indirizzo alla volta e aspetta ogni ping. "
+        "Noterai che è lentino: prova un indirizzo alla volta e aspetta ogni ping. "
         "Tienilo a mente, al Passo 3 vedrai come si fa a renderlo veloce.")
     d.code([
         "bash mio-scanner.sh",
-        "lab06-scanner        # ti da' la flag se il tuo scanner trova 10.10.10.20",
+        "lab06-scanner        # ti dà la flag se il tuo scanner trova 10.10.10.20",
     ])
 
     d.h2("Passo 3 · Lo scanner professionale (+15)")
-    d.p("Ora che sai come funziona, apri quello gia' pronto: fa la stessa cosa ma su "
+    d.p("Ora che sai come funziona, apri quello già pronto: fa la stessa cosa ma su "
         "tutti i 254 indirizzi e in PARALLELO (lancia i ping insieme con `&` e aspetta con "
         "`wait`), quindi finisce in un paio di secondi invece che in mezzo minuto.")
     d.code([
         "cat scanner-host.sh      # leggi le differenze: & , wait , /dev/tcp",
         "./scanner-host.sh 10.10.10",
     ])
-    d.p("Quando individua `10.10.10.20`, ti consegna la flag. Confronta la velocita' con "
+    d.p("Quando individua `10.10.10.20`, ti consegna la flag. Confronta la velocità con "
         "il tuo mini scanner.")
 
     d.h2("Passo 4 · Controlla anche una porta (+15)")
-    d.p("Lo scanner pro sa anche dire se una porta e' aperta, usando la funzione "
+    d.p("Lo scanner pro sa anche dire se una porta è aperta, usando la funzione "
         "`/dev/tcp` di bash. Rilancialo chiedendo la porta 8080.")
     d.code(["./scanner-host.sh 10.10.10 8080"])
 
     d.h1("Parte 3 · Ribaltamento difensivo (15 min)")
     d.p("Uno scanner che pinga tutta la rete e prova le porte lascia tracce: tanti ping "
-        "e tanti tentativi di connessione in pochi secondi. Chi difende puo' accorgersene.")
+        "e tanti tentativi di connessione in pochi secondi. Chi difende può accorgersene.")
     d.box("verde", "Dal lato del difensore", items=[
-        "Un firewall puo' non rispondere al ping, rendendo gli host meno visibili "
-        "(security through minimal exposure, non e' invisibilita' vera ma alza l'asticella).",
+        "Un firewall può non rispondere al ping, rendendo gli host meno visibili "
+        "(security through minimal exposure, non è invisibilità vera ma alza l'asticella).",
         "Un sistema di rilevamento nota il pattern: un solo IP che tocca centinaia di "
         "indirizzi o porte in pochi secondi.",
-        "La segmentazione della rete (VLAN) limita quanto lontano puo' arrivare uno "
+        "La segmentazione della rete (VLAN) limita quanto lontano può arrivare uno "
         "scanner: lo vedremo nel blocco sulle difese di rete.",
     ])
 
@@ -197,7 +197,7 @@ def manuale(d):
         "Installa `/usr/local/bin/lab06-verifica` (primo script) e "
         "`/usr/local/bin/lab06-scanner` (esegue il mio-scanner dello studente e controlla "
         "che trovi 10.10.10.20).",
-        "Lo strumento vive dentro kali.sh (heredoc): e' cosi' che arriva sulla VM tramite "
+        "Lo strumento vive dentro kali.sh (heredoc): è così che arriva sulla VM tramite "
         "`lab`, che scarica solo kali.sh/target.sh.",
     ])
     d.h2("target.sh (sul bersaglio)")
@@ -226,7 +226,7 @@ def manuale(d):
     d.table(["Sintomo", "Causa e rimedio"], [
         ["lo scanner non trova .20", "bersaglio spento o ping bloccato; lanciare `lab 6` "
          "sul bersaglio; provare `ping 10.10.10.20`"],
-        ["porta 8080 sempre chiusa", "container banca giu': sul bersaglio `docker ps`; "
+        ["porta 8080 sempre chiusa", "container banca giù: sul bersaglio `docker ps`; "
          "rilanciare `lab 6`"],
         ["scanner lentissimo", "manca il parallelismo: verificare `&` e `wait` (nella "
          "versione fornita ci sono)"],
@@ -236,6 +236,6 @@ def manuale(d):
 
     d.h1("Nota tecnica (x86)")
     d.p("Ping sweep e /dev/tcp funzionano identici su x86 e ARM. Su una /24 con due soli "
-        "host lo scanner trova `.5` (Kali) e `.20` (bersaglio); e' il comportamento "
+        "host lo scanner trova `.5` (Kali) e `.20` (bersaglio); è il comportamento "
         "atteso. Da provare sul bersaglio reale x86: il controllo della porta 8080, che "
         "dipende dal container nginx della Banca.")

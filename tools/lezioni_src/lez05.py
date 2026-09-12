@@ -8,7 +8,7 @@ def dispensa(d):
     d.box("blu", "In breve", [
         "**Durata:** 2 ore.  Struttura: 25 min teoria · 80 min pratica · 15 min difesa.",
         "**Obiettivo:** capire chi comanda su una macchina Linux (utenti e gruppi), cosa "
-        "sta girando (processi) e cosa e' esposto (servizi e porte), imparando a "
+        "sta girando (processi) e cosa è esposto (servizi e porte), imparando a "
         "enumerare come fa un attaccante appena ottenuto un accesso.",
         "**Al termine sai:** leggere `/etc/passwd`, usare `id`, `ps`, `ss`, `systemctl` e "
         "`sudo -l`, e riconoscere le tre debolezze classiche: utenti di troppo, "
@@ -20,16 +20,16 @@ def dispensa(d):
 
     d.h2("Il caso reale")
     d.p("Un attaccante ottiene una shell su un server con un account qualunque. La prima "
-        "cosa che fa non e' attaccare: e' guardarsi intorno. Chi sono io? Chi altri esiste "
-        "su questa macchina? Cosa sta girando adesso? Cosa e' in ascolto sulla rete? "
-        "Questa fase si chiama enumerazione, ed e' quella che decide tutto: quasi sempre "
-        "la strada per diventare amministratore e' gia' li', in un servizio dimenticato, "
+        "cosa che fa non è attaccare: è guardarsi intorno. Chi sono io? Chi altri esiste "
+        "su questa macchina? Cosa sta girando adesso? Cosa è in ascolto sulla rete? "
+        "Questa fase si chiama enumerazione, ed è quella che decide tutto: quasi sempre "
+        "la strada per diventare amministratore è già lì, in un servizio dimenticato, "
         "in una password scritta male, in una regola di sistema troppo generosa.")
 
     d.h2("Utenti e gruppi")
-    d.p("Ogni utente ha un numero (UID). L'amministratore, root, ha UID 0: puo' fare "
+    d.p("Ogni utente ha un numero (UID). L'amministratore, root, ha UID 0: può fare "
         "tutto. Gli altri utenti hanno permessi limitati. I gruppi servono a dare gli "
-        "stessi permessi a piu' persone insieme.")
+        "stessi permessi a più persone insieme.")
     d.code([
         "whoami          # il tuo nome utente",
         "id              # UID, GID e gruppi a cui appartieni",
@@ -39,7 +39,7 @@ def dispensa(d):
         "commento, home, shell). Le password vere non sono qui: stanno in `/etc/shadow`, "
         "leggibile solo da root. Un dettaglio che tradisce: un utente di servizio "
         "dovrebbe avere shell `/usr/sbin/nologin`; se ne ha una di login (`/bin/bash`), "
-        "e' un campanello d'allarme.")
+        "è un campanello d'allarme.")
     d.cmdref([
         ("`whoami`", "Il nome dell'utente con cui sei collegato."),
         ("`id`", "UID, GID e gruppi a cui appartieni (quanti poteri hai)."),
@@ -49,10 +49,10 @@ def dispensa(d):
     ])
 
     d.h2("Processi")
-    d.p("Un processo e' un programma in esecuzione, con un numero (PID). `ps aux` li "
-        "elenca tutti, con l'intera riga di comando che li ha avviati. E qui c'e' una "
+    d.p("Un processo è un programma in esecuzione, con un numero (PID). `ps aux` li "
+        "elenca tutti, con l'intera riga di comando che li ha avviati. E qui c'è una "
         "trappola classica: se un programma viene lanciato con la password scritta tra "
-        "gli argomenti, chiunque puo' leggerla con `ps`.")
+        "gli argomenti, chiunque può leggerla con `ps`.")
     d.code([
         "ps aux              # tutti i processi, con la riga di comando completa",
         "ps aux | grep -i pass   # cerca eventuali password negli argomenti",
@@ -60,16 +60,16 @@ def dispensa(d):
     ])
     d.cmdref([
         ("`ps aux`", "Elenca tutti i processi (`a` tutti gli utenti, `u` formato "
-                     "leggibile, `x` anche quelli senza terminale). La 2a colonna e' il PID."),
+                     "leggibile, `x` anche quelli senza terminale). La 2a colonna è il PID."),
         ("`top`", "Processi in tempo reale, ordinati per uso di CPU. `q` per uscire."),
         ("`pgrep`", "Trova il PID di un processo dal nome. `-f` cerca nell'intera riga di "
                     "comando, es. `pgrep -f finto-daemon`."),
     ])
 
     d.h2("Servizi e porte")
-    d.p("Un servizio e' un programma che parte da solo e resta in ascolto (per esempio "
+    d.p("Un servizio è un programma che parte da solo e resta in ascolto (per esempio "
         "un server web). `systemctl` gestisce i servizi; `ss` mostra le porte aperte. Una "
-        "porta aperta che nessuno ricorda e' una porta d'ingresso in piu' per chi attacca.")
+        "porta aperta che nessuno ricorda è una porta d'ingresso in più per chi attacca.")
     d.code([
         "systemctl status ssh     # stato di un servizio",
         "ss -tlnp                 # porte TCP in ascolto e chi le tiene",
@@ -82,8 +82,8 @@ def dispensa(d):
         ("`ss`", "Mostra le connessioni di rete. `-t` TCP, `-l` in ascolto, `-n` numeri "
                  "(niente risoluzione dei nomi), `-p` il processo che tiene la porta. "
                  "Insieme: `ss -tlnp`."),
-        ("`sudo -l`", "Elenca cosa il tuo utente puo' eseguire come root: una regola troppo "
-                      "larga qui e' una via per l'escalation dei privilegi."),
+        ("`sudo -l`", "Elenca cosa il tuo utente può eseguire come root: una regola troppo "
+                      "larga qui è una via per l'escalation dei privilegi."),
     ])
 
     d.h1("Parte 2 · Enumerazione sul bersaglio (pratica, 80 min)")
@@ -107,16 +107,16 @@ def dispensa(d):
     ])
 
     d.h2("Passo 2 · La password nel processo (+20)")
-    d.p("Un finto demone e' stato avviato con la password tra gli argomenti. Prima "
+    d.p("Un finto demone è stato avviato con la password tra gli argomenti. Prima "
         "trovala; poi risali dal processo al servizio che lo ha avviato.")
     d.code([
         "ps aux | grep -i pass          # trovi il processo e il suo PID (2a colonna)",
     ])
     d.p("`ps` ti mostra il programma (`/usr/local/bin/finto-daemon`) e il suo PID, ma non "
-        "il nome del servizio. Per arrivarci il percorso e': processo, poi PID, poi unita' "
+        "il nome del servizio. Per arrivarci il percorso è: processo, poi PID, poi unità "
         "systemd.")
     d.code([
-        "systemctl status <PID>         # systemctl risale all'unita' partendo dal PID",
+        "systemctl status <PID>         # systemctl risale all'unità partendo dal PID",
         "# scorciatoia (trova il PID da solo):",
         "systemctl status \"$(pgrep -f finto-daemon | head -1)\"",
     ])
@@ -127,8 +127,8 @@ def dispensa(d):
         "systemctl status lab05-daemon                 # ora sai il nome",
     ])
     d.box("blu", "Dal processo al servizio", intro=(
-        "Tre modi per sapere quale unita' systemd ha avviato un processo:"), items=[
-        "`systemctl status <PID>`: systemctl conosce l'unita' di ogni processo che ha avviato.",
+        "Tre modi per sapere quale unità systemd ha avviato un processo:"), items=[
+        "`systemctl status <PID>`: systemctl conosce l'unità di ogni processo che ha avviato.",
         "`grep -rl <programma> /etc/systemd/system/`: trova il file del servizio che lo lancia.",
         "`cat /proc/<PID>/cgroup`: contiene il percorso ...system.slice/<servizio>.service.",
     ])
@@ -160,9 +160,9 @@ def dispensa(d):
         "Regole sudo minime e specifiche: `sudo -l` non deve mai regalare troppo.",
     ])
     d.code([
-        "# dal lato difensore: cosa e' esposto e chi puo' diventare root",
+        "# dal lato difensore: cosa è esposto e chi può diventare root",
         "ss -tlnp                       # porte aperte, da rivedere una a una",
-        "getent passwd | grep -v nologin | grep -v false   # chi puo' fare login",
+        "getent passwd | grep -v nologin | grep -v false   # chi può fare login",
         "find / -perm -4000 -type f 2>/dev/null             # programmi SUID (poteri di root)",
     ])
 
@@ -187,7 +187,7 @@ def manuale(d):
     d.bullets([
         "Introdurre l'enumerazione post-accesso: utenti, processi, servizi, privilegi.",
         "Riconoscere tre errori reali: account di troppo, credenziali nei processi, "
-        "servizi/porte dimenticati, piu' una regola sudo troppo larga.",
+        "servizi/porte dimenticati, più una regola sudo troppo larga.",
         "Usare systemctl e ss come strumenti sia offensivi sia difensivi.",
     ])
 
@@ -218,7 +218,7 @@ def manuale(d):
         ["4", "sudo -l ; sudo /usr/local/bin/lab05-flag", "FLAG{sudo_apre_le_porte}"],
     ], widths=[900, 5626, 2500])
 
-    d.h1("Mappa di cosa e' seminato dove")
+    d.h1("Mappa di cosa è seminato dove")
     d.table(["Elemento", "Dettaglio"], [
         ["utente backup_old", "shell /bin/bash, GECOS con la flag 1, password backup_old"],
         ["utente webadmin", "nologin, distrattore innocuo"],
@@ -236,16 +236,16 @@ def manuale(d):
 
     d.h1("Troubleshooting")
     d.table(["Sintomo", "Causa e rimedio"], [
-        ["`ss` non c'e'", "installare `iproute2` (di norma presente); in alternativa "
+        ["`ss` non c'è", "installare `iproute2` (di norma presente); in alternativa "
          "`netstat -tlnp`"],
         ["porta 31337 non risponde", "`systemctl status lab05-porta`; se fallisce, "
-         "verificare che python3 sia presente (lo e' su Ubuntu Server)"],
+         "verificare che python3 sia presente (lo è su Ubuntu Server)"],
         ["`sudo -l` non mostra la regola", "controllare `/etc/sudoers.d/lab05` e che "
          "`visudo -cf` la validi; rilanciare `lab 5`"],
         ["ps non mostra il demone", "`systemctl restart lab05-daemon`"],
     ], widths=[2800, 6226])
 
     d.h1("Nota di sicurezza")
-    d.p("La regola sudo e' volutamente insicura ma limitata a un solo comando innocuo "
+    d.p("La regola sudo è volutamente insicura ma limitata a un solo comando innocuo "
         "(stampa una flag). Resta confinata al bersaglio isolato. A fine corso conviene "
         "rimuoverla come mostrato sopra.")

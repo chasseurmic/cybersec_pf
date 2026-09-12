@@ -21,18 +21,18 @@ def dispensa(d):
 
     d.h2("Il caso reale")
     d.p("Un attaccante entra in un server e trova migliaia di file e log enormi. Non "
-        "sta li' a cliccare cartella per cartella: sarebbe come cercare una parola in "
+        "sta lì a cliccare cartella per cartella: sarebbe come cercare una parola in "
         "un dizionario leggendolo pagina per pagina. Invece costruisce una catena di "
         "comandi, tutti sulla stessa riga, che in un secondo trova la password "
         "dimenticata in mezzo a mille file, oppure smaschera l'IP che sta scansionando "
-        "il sito. Questa e' la vera potenza del terminale: ogni comando fa una cosa "
+        "il sito. Questa è la vera potenza del terminale: ogni comando fa una cosa "
         "sola, ma se li colleghi ottieni uno strumento su misura.")
-    d.p("La cosa importante e' che gli stessi identici comandi servono a chi difende. "
+    d.p("La cosa importante è che gli stessi identici comandi servono a chi difende. "
         "Chi tiene d'occhio i log usa `grep`, `sort` e `uniq` per accorgersi di un "
         "attacco. Cambia solo l'intenzione, non gli attrezzi.")
 
     d.h2("La pipe: passare il testo da un comando all'altro")
-    d.p("La pipe e' il simbolo `|` (AltGr + \\ sulla tastiera italiana). Prende cio' che "
+    d.p("La pipe è il simbolo `|` (AltGr + \\ sulla tastiera italiana). Prende ciò che "
         "un comando stampa e lo passa come ingresso al comando dopo. Si leggono da "
         "sinistra a destra, come una catena di montaggio.")
     d.code([
@@ -40,8 +40,8 @@ def dispensa(d):
         "cat access.log | grep 404       # tiene solo le righe con 404",
         "grep 404 access.log | wc -l     # quante richieste hanno dato errore 404",
     ])
-    d.p("Nota: `grep 404 access.log` legge gia' il file da solo, non serve `cat`. Ma la "
-        "pipe diventa indispensabile quando incateni piu' passaggi.")
+    d.p("Nota: `grep 404 access.log` legge già il file da solo, non serve `cat`. Ma la "
+        "pipe diventa indispensabile quando incateni più passaggi.")
 
     d.h2("Le redirezioni: dirottare l'output")
     d.p("Di norma un comando scrive il risultato a schermo. Con le redirezioni lo mandi "
@@ -67,16 +67,16 @@ def dispensa(d):
         ["`cut -d' ' -f1`", "taglia e tiene il primo campo (separatore: spazio)"],
         ["`sort`", "mette le righe in ordine (alfabetico)"],
         ["`sort -u`", "ordina e toglie i doppioni"],
-        ["`sort -rn`", "ordine numerico (`n`) e inverso (`r`): dal piu' grande al piu' piccolo"],
+        ["`sort -rn`", "ordine numerico (`n`) e inverso (`r`): dal più grande al più piccolo"],
         ["`uniq -c`", "conta le righe uguali consecutive (va usato DOPO `sort`)"],
         ["`wc -l`", "conta le righe (`-l` = lines)"],
         ["`head` / `tail`", "mostra le prime / le ultime righe (`-n N` per sceglierne N)"],
         ["`tr ' ' '\\n'`", "traduce/ sostituisce caratteri: qui cambia ogni spazio in un "
-                           "a-capo, cosi' ogni parola va su una riga"],
+                           "a-capo, così ogni parola va su una riga"],
     ], widths=[2600, 6426])
     d.box("blu", "La combo che smaschera lo scanner", intro=(
-        "Questa catena e' un classico del mestiere: prende gli IP dal log, li ordina, "
-        "li conta e mette in cima chi ha fatto piu' richieste."), items=[
+        "Questa catena è un classico del mestiere: prende gli IP dal log, li ordina, "
+        "li conta e mette in cima chi ha fatto più richieste."), items=[
         "`cut -d' ' -f1 access.log | sort | uniq -c | sort -rn | head`",
     ])
 
@@ -85,7 +85,7 @@ def dispensa(d):
         "Kali, `lab 4` prepara la palestra e mostra la missione.")
 
     d.h2("A · Riscaldamento sulla Kali (offline)")
-    d.p("Ti serve solo la Kali. Nella cartella della palestra c'e' un file di frasi: "
+    d.p("Ti serve solo la Kali. Nella cartella della palestra c'è un file di frasi: "
         "estrai le parole uniche in ordine e salvale su file.")
     d.code([
         "cd ~/lab/lezione-04",
@@ -93,8 +93,8 @@ def dispensa(d):
         "tr ' ' '\\n' < frasi.txt | sort -u > parole.txt",
         "lab04-warmup",
     ])
-    d.p("`tr ' ' '\\n'` sostituisce ogni spazio con un a-capo, cosi' ogni parola finisce "
-        "su una riga. Se il verificatore e' contento, ottieni la **prima flag** (+10).")
+    d.p("`tr ' ' '\\n'` sostituisce ogni spazio con un a-capo, così ogni parola finisce "
+        "su una riga. Se il verificatore è contento, ottieni la **prima flag** (+10).")
 
     d.h2("B · Setaccio sul bersaglio (via SSH)")
     d.p("Entra nel bersaglio come nella Lezione 3 e spostati nella cartella dell'azienda.")
@@ -105,7 +105,7 @@ def dispensa(d):
     ])
 
     d.h3("Passo 1 · La riga col SEGRETO (+15)")
-    d.p("Nel log ci sono piu' di mille righe, ma una sola contiene la parola SEGRETO. "
+    d.p("Nel log ci sono più di mille righe, ma una sola contiene la parola SEGRETO. "
         "Fatti aiutare da `grep`.")
     d.code(["grep SEGRETO logs/access.log"])
     d.p("Leggi la flag nascosta in quella riga e riportala al docente.")
@@ -122,11 +122,11 @@ def dispensa(d):
 
     d.h3("Passo 3 · Smaschera lo scanner (+20)")
     d.p("Qualcuno ha martellato il server con centinaia di richieste, quasi tutte "
-        "errori 404: e' uno scanner automatico. Scoprine l'IP con la combo delle pipe.")
+        "errori 404: è uno scanner automatico. Scoprine l'IP con la combo delle pipe.")
     d.code([
         "cut -d' ' -f1 logs/access.log | sort | uniq -c | sort -rn | head",
     ])
-    d.p("L'IP in cima e' il colpevole. Ora leggi il file che porta il suo nome (il "
+    d.p("L'IP in cima è il colpevole. Ora leggi il file che porta il suo nome (il "
         "sistema ne ha lasciato uno apposta).")
     d.code(["cat ip-10.10.10.66.txt          # usa l'IP che hai trovato tu"])
 
@@ -143,7 +143,7 @@ def dispensa(d):
     d.h2("Gli stessi attrezzi, per difendere")
     d.p("Chi difende un server legge i log ogni giorno con questi comandi. La combo del "
         "Passo 3 non serve solo ad attaccare: serve soprattutto ad accorgersi di essere "
-        "attaccati. Un IP con centinaia di 404 in pochi minuti e' un allarme.")
+        "attaccati. Un IP con centinaia di 404 in pochi minuti è un allarme.")
     d.code([
         "# quante richieste per ogni IP (chi esagera salta all'occhio)",
         "cut -d' ' -f1 logs/access.log | sort | uniq -c | sort -rn | head",
@@ -220,7 +220,7 @@ def manuale(d):
          "FLAG{redirezione_su_file}"],
     ], widths=[1500, 5526, 2000])
 
-    d.h1("Mappa di cosa e' seminato dove")
+    d.h1("Mappa di cosa è seminato dove")
     d.table(["Percorso sul bersaglio", "Contenuto"], [
         ["/srv/azienda/logs/access.log", "log con lo scanner e la riga SEGRETO"],
         ["/srv/azienda/documenti/nota-137.txt", "l'unico file con `password=` e la flag 2"],
@@ -228,7 +228,7 @@ def manuale(d):
         ["/srv/azienda/utenti.csv", "elenco utenti (esercizi extra con cut)"],
         ["~/lab/lezione-04/frasi.txt (Kali)", "palestra del riscaldamento"],
     ], widths=[4200, 4826])
-    d.p("L'IP scanner e' fisso a `10.10.10.66`. Se un giorno serve cambiarlo, modifica "
+    d.p("L'IP scanner è fisso a `10.10.10.66`. Se un giorno serve cambiarlo, modifica "
         "`SCANNER_IP` in `target.sh` e il nome del file `ip-...txt` si adegua da solo.")
 
     d.h1("Rigiocare e resettare")
@@ -243,9 +243,9 @@ def manuale(d):
     d.table(["Sintomo", "Causa probabile e rimedio"], [
         ["`ssh` rifiuta la connessione", "bersaglio spento o `lab 4` non lanciato sul "
          "bersaglio; verifica che la VM sia accesa"],
-        ["grep non trova SEGRETO", "il file e' stato riscritto? rilancia `lab 4` sul "
+        ["grep non trova SEGRETO", "il file è stato riscritto? rilancia `lab 4` sul "
          "bersaglio"],
-        ["lab04-verifica dice che manca report.txt", "lo studente e' entrato via SSH ma "
+        ["lab04-verifica dice che manca report.txt", "lo studente è entrato via SSH ma "
          "ha creato report.txt in un'altra cartella; deve stare in `~/report.txt` "
          "(la home dell'utente studente)"],
         ["`|` non si trova sulla tastiera", "AltGr + \\ (tasto sopra Invio) su layout italiano"],
@@ -253,7 +253,7 @@ def manuale(d):
 
     d.h1("Nota didattica (scelta di progetto)")
     d.p("Il lab riusa l'accesso ospite SSH introdotto nella Lezione 3: gli studenti "
-        "hanno gia' il gesto in mano e ci si concentra sulle pipe. Le flag di questa "
+        "hanno già il gesto in mano e ci si concentra sulle pipe. Le flag di questa "
         "lezione sono didattiche e restano in chiaro nel repo (coerente con la politica "
         "flag per i primi blocchi). Dalle sfide web in poi le flag saranno generate a "
         "runtime.")
