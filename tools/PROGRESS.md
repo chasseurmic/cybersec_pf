@@ -27,7 +27,7 @@ in `tools/lezioni_src/lezNN.py`. Build con `python3 tools/build_lezioni.py`
 | 15 | Autenticazione, cookie e sessioni | B4 | ok | ok | ok | verificata |
 | 16 | Brute force del login e difesa | B4 | ok | ok | ok | verificata |
 | 17 | File upload, path traversal e LFI | B4 | ok | ok | ok | verificata |
-| 18 | OWASP Top 10 e mini CTF web | B4 | - | - | - | da fare |
+| 18 | OWASP Top 10 e mini CTF web | B4 | ok | ok | ok | verificata |
 | 19 | Password: hash e salt | B5 | - | - | - | da fare |
 | 20 | Cracking a dizionario, john e hashcat | B5 | - | - | - | da fare |
 | 21 | Cifratura simmetrica e asimmetrica | B5 | - | - | - | da fare |
