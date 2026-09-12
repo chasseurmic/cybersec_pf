@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import comune
 NUM = 24
 SLUG = "sniffing-credenziali-scapy"
 TITOLO = "Sniffing di credenziali con scapy"
@@ -19,7 +20,7 @@ def dispensa(d):
     d.p("Con Wireshark abbiamo letto un pacchetto. Ma un attaccante che vuole raccogliere "
         "credenziali non sta a guardare lo schermo per ore: scrive un programma che "
         "ascolta di continuo e tira fuori da solo ogni utente e password che passa. "
-        "scapy e' la libreria Python che permette di costruire e ascoltare pacchetti in "
+        "scapy è la libreria Python che permette di costruire e ascoltare pacchetti in "
         "poche righe. Oggi trasformi lo sniffing in uno strumento automatico.")
 
     d.h2("scapy in due funzioni")
@@ -51,11 +52,11 @@ def dispensa(d):
     ])
 
     d.h2("Passo 2 · Aspetta la login rara (+35)")
-    d.p("La login admin passa di rado: lascia girare il sniffer. E' la lezione "
+    d.p("La login admin passa di rado: lascia girare il sniffer. È la lezione "
         "dell'attaccante paziente, l'automazione lavora per te mentre fai altro.")
     d.code(["lab24-verifica rara <password>"])
-    d.box("blu", "Perche' automatizzare", items=[
-        "A mano prenderesti solo cio' che vedi mentre guardi; lo script prende tutto.",
+    d.box("blu", "Perché automatizzare", items=[
+        "A mano prenderesti solo ciò che vedi mentre guardi; lo script prende tutto.",
         "Un attaccante lascia il sniffer per ore e raccoglie centinaia di credenziali.",
         "Estrarre con una espressione regolare rende il tool utile su tanti formati.",
     ])
@@ -65,9 +66,48 @@ def dispensa(d):
         "Cifrare tutto (HTTPS, SSH, VPN): scapy catturerebbe solo dati illeggibili.",
         "Mai far viaggiare credenziali in protocolli in chiaro.",
         "Reti segmentate: meno traffico altrui raggiunge l'attaccante (Blocco difese).",
-        "Su reti gestite, funzioni come il port security e la 802.1X limitano chi puo' "
+        "Su reti gestite, funzioni come il port security e la 802.1X limitano chi può "
         "ascoltare.",
     ])
+    comune.studio(
+        d,
+        approfondimenti=[
+            ("Raw socket, modalità promiscua e switch", "Per catturare pacchetti che non sono destinati a te servono due cose. La prima è un raw socket, cioè l'accesso diretto ai pacchetti grezzi: è un'operazione privilegiata, per questo scapy e tcpdump vogliono root. La seconda è la modalità promiscua della scheda, che le fa accettare anche il traffico non indirizzato al suo MAC. C'è però un limite fisico: negli hub (vecchi) tutto il traffico arrivava a tutti, quindi si sniffava tutto; negli switch moderni il traffico viene inviato solo alla porta giusta, quindi di norma vedi solo il tuo traffico e i broadcast. Per sniffare quello altrui su uno switch serve un trucco in più, per esempio mettersi in mezzo con l'ARP spoofing: ed è esattamente il ponte verso la lezione successiva."),
+        ],
+        sintesi=[
+            'scapy permette di costruire e catturare pacchetti in poche righe di Python.',
+            'sniff() con un filtro e una funzione per pacchetto; il contenuto sta nel livello Raw.',
+            'Un attaccante non legge i pacchetti a mano: scrive un tool che estrae le credenziali da solo.',
+            "L'automazione e la persistenza pagano: lasciando girare il tool si catturano anche i dati rari.",
+            'Difesa: cifrare tutto, niente protocolli in chiaro, segmentare la rete.',
+        ],
+        glossario=[
+            ('scapy', 'libreria Python per costruire, inviare e catturare pacchetti'),
+            ('sniff()', 'funzione di scapy che cattura i pacchetti'),
+            ('Filtro BPF', 'espressione per selezionare i pacchetti (es. udp port 9998)'),
+            ('Livello Raw', 'il contenuto applicativo grezzo del pacchetto'),
+            ('Harvesting', 'raccolta automatica di credenziali dal traffico'),
+            ('Espressione regolare', 'schema per estrarre dati (es. utente= e password=)'),
+        ],
+        errori=[
+            "Lanciare sniff() senza root: serve l'accesso ai raw socket.",
+            "Ascoltare l'interfaccia sbagliata (usa quella interna, es. eth1).",
+            "Guardare i pacchetti a mano invece di automatizzare l'estrazione.",
+        ],
+        domande=[
+            'Quali due elementi bastano a scapy per catturare (sniff)?',
+            'Dove si trova il contenuto applicativo di un pacchetto in scapy?',
+            "Perché l'automazione batte la lettura manuale dei pacchetti?",
+            "Perché sniff() richiede i privilegi di root?",
+            'Come rende inutile lo sniffing una rete ben progettata?',
+        ],
+        collegamenti=[
+            'Lezione 23: la cattura manuale con Wireshark, qui automatizzata.',
+            'Lezione 25: dallo sniffing passivo al MITM attivo.',
+            'Lezione 6: costruire i propri strumenti (qui in Python con scapy).',
+        ],
+    )
+
 
     d.h2("Punteggio della Lezione 24")
     d.table(["Obiettivo", "Come", "Punti"], [

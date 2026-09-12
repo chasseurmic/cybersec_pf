@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import comune
 NUM = 2
 SLUG = "allestimento-del-laboratorio"
 TITOLO = "Allestimento del laboratorio"
@@ -101,6 +102,48 @@ def dispensa(d):
     ])
     d.p("In questa lezione, di solito, si firma anche il patto etico del corso: un impegno "
         "scritto a usare queste competenze solo nel laboratorio e per difendere.")
+    comune.studio(
+        d,
+        approfondimenti=[
+            ('Capire gli indirizzi: cosa vuol dire /24', "Gli indirizzi della rete del laboratorio sono scritti come 10.10.10.0/24. Un indirizzo IPv4 è fatto di 32 bit, divisi in quattro gruppi (i quattro numeri). Il numero dopo la barra dice quanti bit, partendo da sinistra, identificano la RETE; i restanti identificano i singoli computer (host). Con /24 i primi 24 bit (cioè 10.10.10) sono la rete e restano 8 bit per gli host: da 10.10.10.1 a 10.10.10.254, cioè 254 indirizzi utilizzabili. Il .0 è l'indirizzo della rete e il .255 è il broadcast (parla a tutti insieme). Ecco perché la tua Kali (10.10.10.5) e il bersaglio (10.10.10.20) si parlano direttamente: hanno gli stessi primi tre gruppi, quindi stanno nella stessa rete locale e non serve un router in mezzo."),
+            ("Perché proprio due schede di rete", "La doppia scheda non è un capriccio: separa due mondi. La scheda NAT collega la VM a internet passando dall'host, e serve solo durante il setup (e alla Kali per scaricare gli script con lab). La scheda su Rete interna collega le VM tra loro in una bolla isolata. Questa separazione è già una lezione di sicurezza: il traffico 'pericoloso' degli esercizi resta confinato, senza mai toccare la rete della scuola. Nel mondo reale si chiama segmentazione, ed è una delle difese più efficaci."),
+        ],
+        sintesi=[
+            'Il laboratorio sono due VM (Kali attaccante 10.10.10.5, bersaglio 10.10.10.20) su una rete interna isolata chiamata labnet.',
+            'Ogni VM ha due schede: NAT (internet) e Rete interna (labnet). Se sbagli qui, niente comunica.',
+            "Il comando lab NN scarica lo script della lezione per il ruolo della macchina, ne mostra un'anteprima e chiede conferma.",
+            "Ordine di accensione: prima il bersaglio, poi la Kali. L'isolamento della rete è già una forma di difesa (segmentazione).",
+        ],
+        glossario=[
+            ('Macchina virtuale (VM)', 'un computer simulato che gira dentro il tuo PC'),
+            ('ISO', 'il file immagine di un disco di installazione (di Kali o Ubuntu)'),
+            ('OVA', "un unico file che impacchetta una o più VM pronte da importare"),
+            ('NAT', "modalità di rete che dà internet alla VM condividendo l'IP dell'host"),
+            ('Rete interna (labnet)', 'rete privata tra le VM, isolata da internet e dalla scuola'),
+            ('Porta', 'numero che identifica un servizio su un IP (es. 8080 = web)'),
+            ('Container Docker', "app impacchettata con tutto ciò che le serve, avviabile in un istante"),
+            ('/etc/lab-role', "file che dice a lab se la macchina è 'kali' o 'target'"),
+        ],
+        errori=[
+            'Mettere la seconda scheda su reti interne con NOMI diversi tra le due VM: non si vedranno.',
+            'Accendere la Kali prima del bersaglio e poi stupirsi che i controlli falliscano.',
+            "Eseguire uno script senza leggerne l'anteprima: pessima abitudine di sicurezza.",
+            'Distribuire un OVA costruito su Mac ARM per PC x86 (non si avvia).',
+        ],
+        domande=[
+            'A cosa servono le due schede di rete di ogni VM?',
+            "Perché lab mostra un'anteprima e chiede conferma prima di eseguire?",
+            "Cos'è una porta e come fa un solo IP a offrire più servizi?",
+            "Che differenza c'è tra NAT e Rete interna?",
+            'Con quali comandi verifichi che la Kali veda il bersaglio?',
+        ],
+        collegamenti=[
+            'Lezione 1: i primi comandi che qui usi per la diagnostica.',
+            'Lezione 8: scoprire gli host della rete labnet con nmap.',
+            "Lezione 12: la 'Banca della Scuola' su :8080 diventa il bersaglio del blocco web.",
+        ],
+    )
+
 
     d.h2("Punteggio della Lezione 2")
     d.table(["Obiettivo", "Come", "Punti"], [

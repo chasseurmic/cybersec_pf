@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import comune
 NUM = 31
 SLUG = "malware-tipi-ciclo-di-vita"
 TITOLO = "Cos'e il malware: tipi e ciclo di vita"
@@ -7,7 +8,7 @@ TITOLO = "Cos'e il malware: tipi e ciclo di vita"
 def dispensa(d):
     d.box("blu", "In breve", [
         "**Durata:** 2 ore.  Struttura: 30 min teoria · 75 min pratica · 15 min difesa.",
-        "**Obiettivo:** capire cos'e' il malware, i suoi tipi principali e le fasi di un "
+        "**Obiettivo:** capire cos'è il malware, i suoi tipi principali e le fasi di un "
         "attacco (ciclo di vita), senza mai eseguire codice pericoloso.",
         "**Al termine sai:** distinguere virus, worm, trojan, ransomware e spyware, e "
         "riconoscere le fasi consegna, esecuzione, persistenza, comando, azione.",
@@ -23,7 +24,7 @@ def dispensa(d):
     d.h1("Parte 1 · La famiglia del malware (teoria, 30 min)")
     d.h2("Il caso reale")
     d.p("Malware vuol dire software malevolo: programmi scritti per danneggiare, rubare o "
-        "prendere il controllo. Non e' tutto uguale: cambia come si diffonde, come si "
+        "prendere il controllo. Non è tutto uguale: cambia come si diffonde, come si "
         "nasconde e cosa fa. Conoscere i tipi aiuta a riconoscere i sintomi e a scegliere "
         "la difesa giusta.")
 
@@ -48,7 +49,7 @@ def dispensa(d):
 
     d.h1("Parte 2 · Riconoscere senza rischiare (pratica, 75 min)")
     d.p("Sulla Kali `lab 31` semina descrizioni di comportamenti (nessun file eseguibile). "
-        "Il tuo compito e' classificarli.")
+        "Il tuo compito è classificarli.")
 
     d.h2("Passo 1 · Classifica i campioni (+40)")
     d.code([
@@ -73,6 +74,47 @@ def dispensa(d):
         "engineering).",
         "Minimo privilegio: un malware con pochi permessi fa pochi danni.",
     ])
+    comune.studio(
+        d,
+        approfondimenti=[
+            ("La catena di infezione e perché il malware cambia forma", "Molti attacchi malware seguono una 'kill chain': ricognizione, consegna (email, chiavetta, download), sfruttamento di una falla per l'esecuzione, installazione con persistenza, collegamento al server di comando (C2) e infine l'azione sull'obiettivo. Conoscere le tappe aiuta a spezzarle: basta bloccarne una. Il malware inoltre cambia continuamente forma per sfuggire agli antivirus: le varianti polimorfe modificano il proprio codice a ogni copia mantenendo lo stesso comportamento. Per questo la difesa moderna non guarda solo 'com'è fatto' un file (le firme), ma 'cosa fa' quando gira (il comportamento): un principio che ritroverai nell'analisi dinamica."),
+        ],
+        sintesi=[
+            'Malware = software malevolo: cambia come si diffonde, come si nasconde e cosa fa.',
+            'Tipi principali: virus, worm, trojan, ransomware, spyware.',
+            'Ciclo di vita: consegna, esecuzione, persistenza, comando (C2), azione.',
+            'In questo blocco non si esegue mai malware vero: solo descrizioni e simulazioni innocue, in sandbox isolata.',
+            'Difese di base: aggiornamenti, antivirus, backup staccati, minimo privilegio.',
+        ],
+        glossario=[
+            ('Malware', 'software creato per danneggiare, rubare o prendere il controllo'),
+            ('Virus / worm', 'si attacca ad altri file / si copia da solo in rete'),
+            ('Trojan', 'si traveste da programma utile ma nasconde codice malevolo'),
+            ('Ransomware', 'cifra i file e chiede un riscatto'),
+            ('Spyware', 'spia di nascosto e invia i dati'),
+            ('Persistenza', 'il meccanismo con cui il malware riparte a ogni riavvio'),
+            ('C2 (comando e controllo)', 'il server da cui il malware riceve ordini'),
+            ('Sandbox', 'ambiente isolato e usa-e-getta per analizzare in sicurezza'),
+        ],
+        errori=[
+            "Scaricare o eseguire malware reale: mai, nemmeno 'per prova'.",
+            'Confondere virus e worm (il worm non ha bisogno che tu apra nulla).',
+            "Non fare backup: è l'unica vera difesa contro il ransomware.",
+        ],
+        domande=[
+            "Che differenza c'è tra virus, worm e trojan?",
+            'Quali sono le fasi del ciclo di vita di un attacco malware?',
+            "Cos'è la persistenza e cos'è il C2?",
+            "Perché l'analisi si fa in una sandbox isolata?",
+            'Quali sono le difese di base contro il malware?',
+        ],
+        collegamenti=[
+            'Lezione 32: analisi statica (guardare senza eseguire).',
+            'Lezione 34: analisi dinamica e indicatori di compromissione.',
+            'Lezione 35-37: hardening, monitoraggio e risposta.',
+        ],
+    )
+
 
     d.h2("Punteggio della Lezione 31")
     d.table(["Obiettivo", "Come", "Punti"], [
@@ -98,7 +140,7 @@ def manuale(d):
     d.h1("Come funziona il lab")
     d.bullets([
         "kali.sh crea `~/lab/lezione-31/campioni.txt` e `ciclo.txt` (solo testo) e "
-        "installa `lab31-verifica`. Nessun file eseguibile e' coinvolto.",
+        "installa `lab31-verifica`. Nessun file eseguibile è coinvolto.",
         "target.sh: nessuna azione.",
     ])
     d.h1("Soluzioni e valori delle flag")
@@ -112,7 +154,7 @@ def manuale(d):
     d.p("Da qui alla Lezione 34 l'ambiente va tenuto isolato: staccare la scheda NAT anche "
         "dalla Kali. Le simulazioni delle lezioni seguenti (analisi statica, ransomware "
         "didattico, IOC) sono innocue e non richiedono internet. Ribadire agli studenti "
-        "che non si scaricano ne' si eseguono mai malware reali.")
+        "che non si scaricano né si eseguono mai malware reali.")
     d.h1("Troubleshooting")
     d.table(["Sintomo", "Causa e rimedio"], [
         ["le risposte non passano", "parole minuscole, senza accenti, nell'ordine 1..5"],

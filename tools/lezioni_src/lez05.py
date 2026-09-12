@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import comune
 NUM = 5
 SLUG = "utenti-gruppi-processi-servizi"
 TITOLO = "Utenti, gruppi, processi e servizi"
@@ -165,6 +166,48 @@ def dispensa(d):
         "getent passwd | grep -v nologin | grep -v false   # chi può fare login",
         "find / -perm -4000 -type f 2>/dev/null             # programmi SUID (poteri di root)",
     ])
+    comune.studio(
+        d,
+        approfondimenti=[
+            ('Cosa succede davvero quando accedi', "Quando entri, il sistema avvia per te una shell con una tua identità (l'UID) e i tuoi gruppi (i GID). Da quel momento ogni file che apri o processo che lanci porta quella identità, e il kernel decide cosa puoi fare confrontandola con i permessi. root (UID 0) è l'eccezione: salta i controlli. I processi formano un albero: il primo di tutti è systemd (PID 1), che avvia e sorveglia i servizi. La differenza tra un processo e un servizio è proprio questa: un servizio è un processo che systemd fa partire da solo all'avvio e riavvia se cade. Ecco perché, per capire da dove arriva un processo sospetto, si risale al servizio che lo ha generato."),
+        ],
+        sintesi=[
+            "Dopo un accesso, la prima mossa non è attaccare: è enumerare (utenti, processi, servizi, privilegi).",
+            "root ha UID 0 e può tutto; /etc/passwd elenca gli utenti; le password stanno in /etc/shadow.",
+            "ps aux mostra i processi con la riga di comando: una password passata come argomento è visibile a tutti.",
+            'ss -tlnp mostra le porte in ascolto; systemctl gestisce i servizi; sudo -l dice cosa puoi fare da root.',
+            "Dal processo al servizio: dal PID risali all'unità con systemctl status <PID>.",
+        ],
+        glossario=[
+            ('UID / GID', "numero identificativo dell'utente / del gruppo (root = 0)"),
+            ('/etc/passwd', 'elenco degli utenti (7 campi separati da :)'),
+            ('Processo / PID', 'un programma in esecuzione / il suo numero identificativo'),
+            ('Servizio (daemon)', 'programma che parte da solo e resta attivo in background'),
+            ('systemd / systemctl', 'il gestore dei servizi di Linux e il suo comando'),
+            ('Porta in ascolto', 'porta su cui un servizio aspetta connessioni'),
+            ('sudo', "eseguire comandi come root; sudo -l elenca cosa è permesso"),
+            ('Enumerazione', 'raccogliere informazioni su un sistema dopo esservi entrati'),
+        ],
+        errori=[
+            'Passare password come argomenti di un comando: restano in chiaro in ps aux.',
+            'Lasciare utenti di servizio con shell di login invece di nologin.',
+            "Regole sudo troppo larghe (NOPASSWD su comandi potenti): via all'escalation.",
+            "Tenere accesi servizi inutili: ogni porta aperta è una porta d'ingresso in più.",
+        ],
+        domande=[
+            'Come trovi una password lasciata negli argomenti di un processo?',
+            'Dato un PID, come scopri quale servizio systemd lo ha avviato?',
+            "Perché un utente di servizio dovrebbe avere shell nologin?",
+            "Cosa mostra sudo -l e perché è importante per un attaccante?",
+            'Con quale comando elenchi le porte TCP in ascolto e chi le tiene?',
+        ],
+        collegamenti=[
+            "Lezione 3: i permessi, l'altra faccia dei privilegi.",
+            "Lezione 9-10: scoprire dall'esterno le porte e i servizi che qui vedi dall'interno.",
+            "Lezione 35: hardening, cioè spegnere servizi e stringere le regole sudo.",
+        ],
+    )
+
 
     d.h2("Punteggio della Lezione 5")
     d.table(["Obiettivo", "Come", "Punti"], [

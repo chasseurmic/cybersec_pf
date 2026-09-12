@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import comune
 NUM = 7
 SLUG = "footprinting-osint"
 TITOLO = "Footprinting e OSINT (simulati nel lab)"
@@ -8,7 +9,7 @@ def dispensa(d):
     d.box("blu", "In breve", [
         "**Durata:** 2 ore.  Struttura: 25 min teoria · 80 min pratica · 15 min difesa.",
         "**Obiettivo:** raccogliere informazioni su un bersaglio prima di attaccarlo, "
-        "usando solo cio' che il bersaglio stesso espone (footprinting) e le fonti "
+        "usando solo ciò che il bersaglio stesso espone (footprinting) e le fonti "
         "aperte (OSINT), qui simulate dentro il laboratorio isolato.",
         "**Al termine sai:** fare fingerprint di un sito, leggere le intestazioni HTTP, "
         "spulciare il codice sorgente e robots.txt, scovare cartelle nascoste con un "
@@ -19,26 +20,26 @@ def dispensa(d):
     d.h1("Parte 1 · Guardare prima di toccare (teoria, 25 min)")
 
     d.h2("Il caso reale")
-    d.p("Prima di ogni attacco serio c'e' una fase silenziosa: la raccolta di "
+    d.p("Prima di ogni attacco serio c'è una fase silenziosa: la raccolta di "
         "informazioni. Chi attacca vuole sapere che tecnologie usi, chi lavora nella tua "
         "azienda, che email avete, cosa avete pubblicato per sbaglio. Spesso non serve "
-        "bucare niente: le informazioni sono gia' li', in un commento nel codice, in una "
+        "bucare niente: le informazioni sono già lì, in un commento nel codice, in una "
         "cartella lasciata online, in un vecchio backup. Questo mestiere si chiama OSINT "
         "(Open Source INTelligence): intelligence dalle fonti aperte.")
-    d.p("Nel nostro laboratorio non usciamo su internet: mai. Abbiamo pero' seminato sul "
-        "bersaglio un finto footprint pubblico, cosi' potete allenare le stesse tecniche "
+    d.p("Nel nostro laboratorio non usciamo su internet: mai. Abbiamo però seminato sul "
+        "bersaglio un finto footprint pubblico, così potete allenare le stesse tecniche "
         "in sicurezza, contro dati inventati.")
 
     d.h2("Footprinting attivo vs OSINT passivo")
     d.bullets([
-        "**OSINT passivo:** guardare cio' che e' gia' pubblico senza toccare il bersaglio "
+        "**OSINT passivo:** guardare ciò che è già pubblico senza toccare il bersaglio "
         "(motori di ricerca, social, registri). Il bersaglio non se ne accorge.",
         "**Footprinting attivo:** interrogare direttamente il bersaglio (visitare il "
         "sito, leggere robots.txt, cercare cartelle). Lascia qualche traccia.",
     ])
 
     d.h2("Le briciole che lascia un sito web")
-    d.table(["Dove guardare", "Cosa puo' rivelare"], [
+    d.table(["Dove guardare", "Cosa può rivelare"], [
         ["Intestazioni HTTP", "server, tecnologie, a volte header di debug dimenticati"],
         ["Codice sorgente (HTML)", "commenti degli sviluppatori, percorsi, note interne"],
         ["robots.txt", "cartelle che il sito preferisce non far indicizzare"],
@@ -52,7 +53,7 @@ def dispensa(d):
         "`lab 7` prepara una piccola wordlist e mostra la missione.")
 
     d.h2("Passo 1 · Fingerprint e intestazioni (+15)")
-    d.p("Chiedi al server chi e' e guarda le intestazioni HTTP: a volte contengono piu' "
+    d.p("Chiedi al server chi è e guarda le intestazioni HTTP: a volte contengono più "
         "del dovuto.")
     d.code([
         "whatweb http://10.10.10.20:8080",
@@ -71,7 +72,7 @@ def dispensa(d):
         "Ti servira' nelle lezioni sul login.")
 
     d.h2("Passo 3 · robots.txt (+20)")
-    d.p("robots.txt dice ai motori di ricerca cosa non indicizzare. Per un attaccante e' "
+    d.p("robots.txt dice ai motori di ricerca cosa non indicizzare. Per un attaccante è "
         "una mappa delle cartelle che qualcuno vorrebbe tenere nascoste.")
     d.code([
         "curl -s http://10.10.10.20:8080/robots.txt",
@@ -84,14 +85,14 @@ def dispensa(d):
     d.code([
         "cd ~/lab/lezione-07",
         "gobuster dir -u http://10.10.10.20:8080 -w parole.txt",
-        "# gobuster trova /backup : aprila (il listing e' attivo)",
+        "# gobuster trova /backup : aprila (il listing è attivo)",
         "curl -s http://10.10.10.20:8080/backup/",
         "curl -s http://10.10.10.20:8080/backup/credenziali.old",
     ])
     d.box("blu", "Profilazione (bonus, senza punti)", intro=(
         "Metti insieme i pezzi come farebbe un attaccante:"), items=[
         "Dai nomi in 'chi siamo' e dal formato email, ricava l'indirizzo della direttrice.",
-        "Nel backup c'e' una password che la direttrice riusa: annotala per le lezioni "
+        "Nel backup c'è una password che la direttrice riusa: annotala per le lezioni "
         "sul login e sul brute force.",
     ])
 
@@ -104,9 +105,51 @@ def dispensa(d):
         "Disattivare il directory listing; niente file .old o .bak sui server pubblici.",
         "Rivedere le intestazioni HTTP: togliere header di debug e versioni troppo "
         "dettagliate.",
-        "robots.txt non e' una protezione: cio' che deve stare privato va protetto con "
+        "robots.txt non è una protezione: ciò che deve stare privato va protetto con "
         "autenticazione, non solo nascosto.",
     ])
+    comune.studio(
+        d,
+        approfondimenti=[
+            ('Footprint aziendale: quanto si scopre senza bucare nulla', "La ricognizione di un'organizzazione, prima ancora di toccarne i server, mette insieme pezzi pubblici: il formato delle email (nome.cognome), i nomi dei dipendenti dai social e dalla pagina 'chi siamo', i sottodomini, le tecnologie usate, documenti pubblicati con i metadati dentro. Ognuno è innocuo da solo, ma insieme disegnano una mappa: chi attaccare (il neoassunto, il responsabile in ferie), come scrivergli, che software provare a sfruttare. Nel nostro laboratorio tutto questo è finto e seminato apposta, ma la tecnica è quella reale. Il difensore fa lo stesso esercizio sulla propria azienda per capire cosa sta regalando all'attaccante e ridurlo."),
+        ],
+        sintesi=[
+            "La reconnaissance è la raccolta di informazioni prima dell'attacco: spesso i dati sono già esposti.",
+            'OSINT passivo (fonti aperte, non tocca il bersaglio) vs footprinting attivo (interroga il bersaglio).',
+            'Un sito rivela molto: intestazioni HTTP, commenti nel codice, robots.txt, directory listing, file .bak.',
+            'robots.txt non protegge: elenca proprio le cartelle che qualcuno vorrebbe nascondere.',
+            "Un dir buster prova tanti nomi e trova ciò che non è linkato da nessuna parte.",
+        ],
+        glossario=[
+            ('Reconnaissance', 'la fase di raccolta informazioni su un bersaglio'),
+            ('OSINT', 'intelligence da fonti aperte (Open Source Intelligence)'),
+            ('Footprinting', 'profilazione attiva del bersaglio (visitare il sito, ecc.)'),
+            ('Intestazioni HTTP', 'coppie nome-valore nella risposta (Server, header custom)'),
+            ('robots.txt', 'file che chiede ai motori di non indicizzare certe cartelle'),
+            ('Directory listing', 'elenco automatico dei file di una cartella senza indice'),
+            ('Dir busting', 'provare tanti nomi di cartelle/file per scoprirli (gobuster, dirb)'),
+            ('whatweb', 'strumento che identifica tecnologie e versioni di un sito'),
+        ],
+        errori=[
+            'Credere che robots.txt nasconda: al contrario, indica dove guardare.',
+            'Lasciare il directory listing attivo o file .old/.bak sui server pubblici.',
+            'Mettere commenti sensibili nel codice HTML che va in produzione.',
+            "Fare OSINT su bersagli reali fuori dal lab: qui è tutto simulato apposta.",
+        ],
+        domande=[
+            "Che differenza c'è tra OSINT passivo e footprinting attivo?",
+            "Come leggi le intestazioni HTTP di un sito e perché possono tradirlo?",
+            "Perché robots.txt aiuta l'attaccante invece di proteggere?",
+            "Come trovi una cartella che non è linkata da nessuna pagina?",
+            "Dal formato delle email aziendali, cosa può dedurre un attaccante?",
+        ],
+        collegamenti=[
+            'Lezione 8-10: la ricognizione a livello di rete (host, porte, servizi).',
+            "Lezione 28: come l'OSINT alimenta gli attacchi di social engineering.",
+            'Lezione 12+: gli attacchi web contro il sito che qui hai profilato.',
+        ],
+    )
+
 
     d.h2("Punteggio della Lezione 7")
     d.table(["Obiettivo", "Come", "Punti"], [
@@ -157,7 +200,7 @@ def manuale(d):
          "FLAG{directory_dimenticata}"],
     ], widths=[900, 5426, 2700])
 
-    d.h1("Mappa di cosa e' seminato dove")
+    d.h1("Mappa di cosa è seminato dove")
     d.table(["URL", "Contenuto"], [
         ["/ (header)", "X-Debug-Flag (flag 1) + X-Powered-By"],
         ["/chi-siamo.html", "team, formato email, commento con flag 2"],
@@ -166,17 +209,17 @@ def manuale(d):
         ["/backup/credenziali.old", "admin:Estate2021! (riuso) + flag 4"],
     ], widths=[3200, 5826])
     d.p("La password `Estate2021!` e l'account `admin` sono riusati apposta: torneranno "
-        "nelle lezioni su login e brute force (continuita' della narrazione).")
+        "nelle lezioni su login e brute force (continuità della narrazione).")
 
     d.h1("Rigiocare, resettare, troubleshooting")
     d.bullets([
         "Rigioca/reset: rilancia `lab 7` sul bersaglio (ricrea file e container).",
         "Se manca l'header: `docker logs banca`; verificare che la conf sia montata.",
-        "Se gobuster e' lento: usare la wordlist `parole.txt` fornita (piccola).",
+        "Se gobuster è lento: usare la wordlist `parole.txt` fornita (piccola).",
         "Se /backup/ non elenca i file: verificare `autoindex on` nella conf montata.",
     ])
 
     d.h1("Nota didattica")
-    d.p("L'OSINT reale usa internet; qui e' vietato per legge e per policy. Abbiamo "
-        "quindi ricreato un footprint verosimile sul bersaglio, cosi' le tecniche sono "
+    d.p("L'OSINT reale usa internet; qui è vietato per legge e per policy. Abbiamo "
+        "quindi ricreato un footprint verosimile sul bersaglio, così le tecniche sono "
         "quelle vere ma i dati sono inventati e confinati al laboratorio.")

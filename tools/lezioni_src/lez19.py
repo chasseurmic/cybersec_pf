@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import comune
 NUM = 19
 SLUG = "password-hash-salt"
 TITOLO = "Come sono conservate le password (hash e salt)"
@@ -8,7 +9,7 @@ def dispensa(d):
     d.box("blu", "In breve", [
         "**Durata:** 2 ore.  Struttura: 25 min teoria · 80 min pratica · 15 min difesa.",
         "**Obiettivo:** capire come un sito serio conserva le password (non in chiaro!) "
-        "usando gli hash, e perche' serve il sale (salt) per non farsi rubare tutto in "
+        "usando gli hash, e perché serve il sale (salt) per non farsi rubare tutto in "
         "caso di fuga di dati.",
         "**Al termine sai:** calcolare hash MD5 e SHA-256, capire che sono a senso unico, "
         "riconoscere il pericolo degli hash senza sale e come il sale lo risolve.",
@@ -18,35 +19,35 @@ def dispensa(d):
     d.h1("Parte 1 · Non salvare mai le password in chiaro (teoria, 25 min)")
     d.h2("Il caso reale")
     d.p("Ogni tanto un sito viene bucato e finisce online il suo database di utenti. Se le "
-        "password erano salvate in chiaro, e' un disastro immediato: gli attaccanti le "
-        "provano su email, social, banche (perche' la gente riusa le password). Per "
-        "questo le password non vanno mai salvate cosi' come sono. La soluzione si chiama "
+        "password erano salvate in chiaro, è un disastro immediato: gli attaccanti le "
+        "provano su email, social, banche (perché la gente riusa le password). Per "
+        "questo le password non vanno mai salvate così come sono. La soluzione si chiama "
         "hash.")
 
     d.h2("L'hash: un tritacarne a senso unico")
     d.p("Un hash trasforma un testo in una stringa di lunghezza fissa, in modo che: dallo "
         "stesso testo esca sempre lo stesso hash; da testi diversi escano hash diversi; e "
-        "dall'hash NON si possa tornare indietro al testo. E' come tritare la carne: "
+        "dall'hash NON si possa tornare indietro al testo. È come tritare la carne: "
         "facile fare l'hamburger, impossibile ricostruire la bistecca.")
     d.code([
         "printf '%s' password | md5sum       # sempre lo stesso risultato",
-        "printf '%s' password | sha256sum    # hash piu' robusto e lungo",
+        "printf '%s' password | sha256sum    # hash più robusto e lungo",
         "printf '%s' Password | sha256sum    # una lettera diversa, hash completamente diverso",
     ])
     d.p("Al login il sito non confronta le password: calcola l'hash di quella che scrivi e "
-        "lo confronta con quello salvato. Cosi' la password vera non e' scritta da nessuna "
+        "lo confronta con quello salvato. Così la password vera non è scritta da nessuna "
         "parte.")
 
     d.h2("Il problema: stessa password, stesso hash")
     d.p("Se due utenti scelgono la stessa password e il sito salva l'hash 'nudo', i due "
         "hash sono identici. Un attaccante che vede due hash uguali sa che quelle persone "
         "hanno la stessa password, e con delle tabelle precalcolate (rainbow table) "
-        "risale in fretta alle password piu' comuni.")
+        "risale in fretta alle password più comuni.")
 
     d.h2("La soluzione: il sale (salt)")
-    d.p("Il sale e' una stringa casuale diversa per ogni utente, che si aggiunge alla "
-        "password prima di calcolare l'hash. Cosi' due persone con la stessa password "
-        "hanno hash diversi, e le rainbow table non funzionano piu'.")
+    d.p("Il sale è una stringa casuale diversa per ogni utente, che si aggiunge alla "
+        "password prima di calcolare l'hash. Così due persone con la stessa password "
+        "hanno hash diversi, e le rainbow table non funzionano più.")
     d.code([
         "# senza sale: stessa password -> stesso hash",
         "printf '%s' 'primavera' | sha256sum",
@@ -83,13 +84,53 @@ def dispensa(d):
     d.box("verde", "Come si conservano le password, sul serio", items=[
         "Mai in chiaro. Mai con MD5 o SHA 'nudi': sono troppo veloci da forzare.",
         "Usare funzioni pensate apposta e lente: bcrypt, scrypt, Argon2. La lentezza qui "
-        "e' una difesa (rende il brute force costoso).",
+        "è una difesa (rende il brute force costoso).",
         "Sempre con un sale casuale e diverso per ogni utente.",
         "Non reimporre limiti assurdi che spingono a password deboli; incoraggiare "
         "passphrase lunghe e il 2FA.",
     ])
-    d.p("Nella prossima lezione vediamo l'altra faccia: quanto e' facile, con un hash "
+    d.p("Nella prossima lezione vediamo l'altra faccia: quanto è facile, con un hash "
         "veloce e senza sale, ritrovare le password con un dizionario.")
+    comune.studio(
+        d,
+        approfondimenti=[
+            ('Dentro un hash: collisioni, sale e pepe', "Una funzione di hash prende un input di qualsiasi lunghezza e produce un'impronta di lunghezza fissa, in modo che un minimo cambiamento nell'input stravolga l'output (effetto valanga). Due input diversi che producono lo stesso hash sono una 'collisione': un buon algoritmo le rende praticamente impossibili, ed è qui che MD5 ha fallito nel tempo. Per le password non basta l'algoritmo: si aggiunge un sale (salt), casuale e diverso per ogni utente, memorizzato accanto all'hash, che rende unico ogni risultato e inutili le tabelle precalcolate. Alcuni sistemi aggiungono anche un 'pepe' (pepper), un valore segreto uguale per tutti tenuto separato dal database: se il DB viene rubato ma il pepe no, gli hash restano più difficili da attaccare."),
+        ],
+        sintesi=[
+            'Le password non si salvano mai in chiaro: si salva il loro hash, una funzione a senso unico.',
+            "Stesso testo -> stesso hash; da testi diversi -> hash diversi; dall'hash non si torna al testo.",
+            'Hash uguali = password uguali: senza sale, due utenti con la stessa password hanno lo stesso hash.',
+            "Il sale (salt) è una stringa casuale per utente aggiunta prima dell'hash: rende gli hash tutti diversi.",
+            'Difesa vera: funzioni lente e salate (bcrypt, scrypt, Argon2), non MD5/SHA nudi.',
+        ],
+        glossario=[
+            ('Hash', 'funzione a senso unico che trasforma un testo in una stringa fissa'),
+            ('A senso unico', "dall'hash non si ricava il testo di partenza"),
+            ('MD5 / SHA-256', 'algoritmi di hash (veloci, non adatti da soli alle password)'),
+            ('Sale (salt)', "stringa casuale per utente aggiunta prima dell'hash"),
+            ('Rainbow table', 'tabella precalcolata hash->testo, resa inutile dal sale'),
+            ('bcrypt / Argon2', 'funzioni di hash lente e salate, adatte alle password'),
+        ],
+        errori=[
+            'Salvare le password in chiaro (o cifrarle in modo reversibile).',
+            'Usare MD5/SHA nudi: troppo veloci, cadono al cracking.',
+            'Non usare un sale diverso per ogni utente.',
+            "Usare echo invece di printf '%s': echo aggiunge un a-capo e cambia l'hash.",
+        ],
+        domande=[
+            "Qual è la differenza tra hash e cifratura?",
+            "Perché due utenti con la stessa password possono tradirsi senza sale?",
+            "A cosa serve il sale e perché rende inutili le rainbow table?",
+            "Perché MD5 non è adatto a proteggere le password?",
+            "Quali funzioni si usano oggi per le password e perché sono lente?",
+        ],
+        collegamenti=[
+            'Lezione 20: come si craccano gli hash deboli.',
+            'Lezione 21: hashing vs cifratura, due cose diverse.',
+            "Lezione 12-13: perché un dump di password in chiaro è un disastro.",
+        ],
+    )
+
 
     d.h2("Punteggio della Lezione 19")
     d.table(["Obiettivo", "Come", "Punti"], [
@@ -136,6 +177,6 @@ def manuale(d):
         ["voglio rigiocare", "rilanciare `lab 19` (ricrea dump e verificatore)"],
     ], widths=[2600, 6426])
     d.h1("Nota didattica")
-    d.p("Il dettaglio piu' importante da far notare: `echo` aggiunge un a-capo e cambia "
-        "l'hash. Usare sempre `printf '%s'`. E' un errore classico e un'ottima occasione "
+    d.p("Il dettaglio più importante da far notare: `echo` aggiunge un a-capo e cambia "
+        "l'hash. Usare sempre `printf '%s'`. È un errore classico e un'ottima occasione "
         "per parlare di precisione.")

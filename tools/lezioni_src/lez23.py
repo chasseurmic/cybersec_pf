@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import comune
 NUM = 23
 SLUG = "tcpip-wireshark"
 TITOLO = "TCP/IP e Wireshark"
@@ -9,7 +10,7 @@ def dispensa(d):
         "**Durata:** 2 ore.  Struttura: 25 min teoria · 80 min pratica · 15 min difesa.",
         "**Obiettivo:** capire come viaggiano i dati in rete (TCP/IP, pacchetti, "
         "handshake) e usare Wireshark/tcpdump per catturarli e leggerli, scoprendo quanto "
-        "e' esposto il traffico non cifrato.",
+        "è esposto il traffico non cifrato.",
         "**Al termine sai:** catturare pacchetti, usare i filtri, riconoscere il "
         "three-way handshake e leggere credenziali che viaggiano in chiaro.",
         "**Flag in palio:** 2 flag (70 punti).",
@@ -18,17 +19,17 @@ def dispensa(d):
     d.h1("Parte 1 · Come viaggiano i dati (teoria, 25 min)")
     d.h2("Il caso reale")
     d.p("Su una rete condivisa (una wifi pubblica, una rete aziendale mal configurata) "
-        "chi ascolta puo' vedere il traffico degli altri. Se quel traffico non e' "
-        "cifrato, legge tutto: pagine, ricerche, perfino password. Wireshark e' lo "
+        "chi ascolta può vedere il traffico degli altri. Se quel traffico non è "
+        "cifrato, legge tutto: pagine, ricerche, perfino password. Wireshark è lo "
         "strumento che rende visibile questo flusso invisibile. Impararlo serve tanto ad "
         "attaccare quanto a diagnosticare e difendere una rete.")
 
     d.h2("La pila TCP/IP")
-    d.p("I dati vengono impacchettati a strati, come una lettera dentro buste sempre piu' "
+    d.p("I dati vengono impacchettati a strati, come una lettera dentro buste sempre più "
         "grandi.")
     d.table(["Livello", "Cosa aggiunge", "Esempio"], [
         ["Applicazione", "il contenuto vero", "HTTP, DNS"],
-        ["Trasporto", "porte e affidabilita'", "TCP, UDP"],
+        ["Trasporto", "porte e affidabilità", "TCP, UDP"],
         ["Rete", "gli indirizzi IP", "IP"],
         ["Collegamento", "gli indirizzi MAC", "Ethernet, Wi-Fi"],
     ], widths=[2000, 4026, 3000])
@@ -42,7 +43,7 @@ def dispensa(d):
     d.p("Sul bersaglio `lab 23` avvia un 'beacon' che manda in chiaro, ogni 3 secondi, un "
         "messaggio con credenziali e una flag. Sulla Kali lo catturi.")
     d.p("Trova prima l'interfaccia della rete interna:")
-    d.code(["ip -br addr        # di solito eth1 e' la rete interna del lab"])
+    d.code(["ip -br addr        # di solito eth1 è la rete interna del lab"])
 
     d.h2("Passo 1 · Cattura il beacon in chiaro (+40)")
     d.p("Ascolta la porta UDP 9999. Con `-A` tcpdump mostra il testo dei pacchetti.")
@@ -53,7 +54,7 @@ def dispensa(d):
     d.p("Nel testo del pacchetto compare la prima flag.")
 
     d.h2("Passo 2 · Leggi la password in chiaro (+30)")
-    d.p("Nello stesso messaggio c'e' un campo `password=...`. Leggila e consegnala.")
+    d.p("Nello stesso messaggio c'è un campo `password=...`. Leggila e consegnala.")
     d.code(["lab23-verifica <la-password-che-hai-letto>"])
 
     d.box("blu", "Extra: guarda un handshake", intro=(
@@ -65,13 +66,52 @@ def dispensa(d):
 
     d.h1("Parte 3 · Ribaltamento difensivo (15 min)")
     d.box("verde", "Difendersi dallo sniffing", items=[
-        "Cifrare tutto: HTTPS, SSH, VPN. Cio' che e' cifrato, anche se catturato, non si "
+        "Cifrare tutto: HTTPS, SSH, VPN. Cio' che è cifrato, anche se catturato, non si "
         "legge.",
-        "Reti segmentate e switch gestiti: riducono cosa un attaccante puo' ascoltare.",
+        "Reti segmentate e switch gestiti: riducono cosa un attaccante può ascoltare.",
         "Niente protocolli in chiaro per dati sensibili (HTTP, FTP, Telnet): il beacon di "
         "oggi era l'esempio da NON imitare.",
         "Monitorare la rete: anche chi difende usa Wireshark, per capire cosa succede.",
     ])
+    comune.studio(
+        d,
+        approfondimenti=[
+            ('Incapsulamento: le buste dentro le buste', "Quando invii un dato, ogni livello della pila TCP/IP aggiunge la propria 'busta' (header) attorno a quella del livello sopra. L'applicazione produce il contenuto (es. una richiesta HTTP); il livello di trasporto (TCP) ci mette davanti le porte di origine e destinazione; il livello di rete (IP) aggiunge gli indirizzi IP; il livello di collegamento (Ethernet) aggiunge i MAC. In ricezione si aprono le buste in ordine inverso. Ecco perché in Wireshark, cliccando un pacchetto, vedi i livelli uno dentro l'altro: Ethernet, poi IP, poi TCP, poi i dati. E capisci anche la differenza tra i tre indirizzi che hai incontrato: il MAC serve nella rete locale, l'IP per arrivare attraverso i router, la porta per consegnare al servizio giusto sul computer di destinazione."),
+        ],
+        sintesi=[
+            'I dati viaggiano a strati (TCP/IP): applicazione, trasporto, rete, collegamento.',
+            "Su una rete condivisa, chi ascolta vede il traffico altrui: se non è cifrato, lo legge tutto.",
+            "Wireshark e tcpdump catturano i pacchetti; i filtri isolano ciò che interessa.",
+            "Il three-way handshake (SYN, SYN-ACK, ACK) si vede all'inizio di ogni connessione TCP.",
+            'Difesa: cifrare tutto; il traffico cifrato, anche catturato, resta illeggibile.',
+        ],
+        glossario=[
+            ('Pila TCP/IP', 'i livelli con cui i dati vengono impacchettati'),
+            ('Pacchetto', "l'unità di dati che viaggia in rete"),
+            ('Wireshark / tcpdump', 'strumenti per catturare e leggere i pacchetti'),
+            ('Filtro (BPF)', 'regola per mostrare solo certi pacchetti (es. udp port 9999)'),
+            ('Sniffing', 'ascoltare il traffico di rete'),
+            ('Follow TCP Stream', "ricostruire l'intera conversazione di una connessione"),
+        ],
+        errori=[
+            "Catturare sull'interfaccia sbagliata e non vedere nulla.",
+            'Far viaggiare credenziali in chiaro (HTTP, FTP, Telnet).',
+            "Pensare che sniffare sia innocuo: intercettare traffico altrui è illegale fuori dal lab.",
+        ],
+        domande=[
+            'Quali sono i livelli della pila TCP/IP?',
+            "Perché su una rete condivisa si può leggere il traffico altrui?",
+            'Come isoli in Wireshark solo il traffico che ti interessa?',
+            'Quali sono i tre pacchetti del handshake e dove si vedono?',
+            "Perché cifrare rende inutile lo sniffing?",
+        ],
+        collegamenti=[
+            'Lezione 24: automatizzare lo sniffing con scapy.',
+            'Lezione 21-22: la cifratura che protegge dal sniffing.',
+            "Lezione 9: TCP e porte, già incontrati con nmap.",
+        ],
+    )
+
 
     d.h2("Punteggio della Lezione 23")
     d.table(["Obiettivo", "Come", "Punti"], [
@@ -118,6 +158,6 @@ def manuale(d):
          "Rete interna labnet"],
     ], widths=[3000, 6026])
     d.h1("Nota tecnica")
-    d.p("Il beacon in broadcast e' semplice e affidabile per l'aula: ogni studente lo "
+    d.p("Il beacon in broadcast è semplice e affidabile per l'aula: ogni studente lo "
         "cattura senza dover generare traffico. La parte handshake usa il sito :8080 "
-        "(banca): se non e' attivo, va bene qualsiasi connessione TCP verso il bersaglio.")
+        "(banca): se non è attivo, va bene qualsiasi connessione TCP verso il bersaglio.")

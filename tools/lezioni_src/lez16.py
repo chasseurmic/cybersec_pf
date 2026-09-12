@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import comune
 NUM = 16
 SLUG = "brute-force-login-difesa"
 TITOLO = "Brute force del login e la sua difesa"
@@ -7,11 +8,11 @@ TITOLO = "Brute force del login e la sua difesa"
 def dispensa(d):
     d.box("blu", "In breve", [
         "**Durata:** 2 ore.  Struttura: 25 min teoria · 80 min pratica · 15 min difesa.",
-        "**Obiettivo:** capire il brute force (provare tante password finche' una "
+        "**Obiettivo:** capire il brute force (provare tante password finché una "
         "funziona), scrivere un piccolo strumento che lo fa, e vedere dal vivo come una "
         "difesa (il rate limiting) lo ferma.",
         "**Al termine sai:** usare una wordlist, forzare un login con un tuo tool e con "
-        "hydra, e spiegare perche' limiti e lockout sono efficaci.",
+        "hydra, e spiegare perché limiti e lockout sono efficaci.",
         "**Flag in palio:** 2 flag (70 punti).",
     ])
 
@@ -19,14 +20,14 @@ def dispensa(d):
     d.h2("Il caso reale")
     d.p("Molti attacchi non sfruttano falle sofisticate: provano solo tante password. Se "
         "un sito accetta tentativi illimitati e gli utenti usano password deboli, prima o "
-        "poi una passa. Gli elenchi di password piu' comuni (come il famoso rockyou, "
+        "poi una passa. Gli elenchi di password più comuni (come il famoso rockyou, "
         "milioni di password trapelate da un vero sito) rendono il gioco molto veloce. "
         "Oggi costruiamo il nostro forzatore e poi vediamo come si difende un login.")
 
     d.h2("Wordlist e attacco a dizionario")
     d.p("Il brute force 'puro' prova ogni combinazione possibile: lentissimo. L'attacco a "
-        "dizionario e' piu' furbo: prova solo password probabili, prese da una lista. E' "
-        "cosi' che funzionano gli strumenti veri.")
+        "dizionario è più furbo: prova solo password probabili, prese da una lista. È "
+        "così che funzionano gli strumenti veri.")
 
     d.h1("Parte 2 · Forza il login (pratica, 80 min)")
     d.p("Sul bersaglio `lab 16` avvia un servizio di login su :8095 con due porte: "
@@ -34,7 +35,7 @@ def dispensa(d):
         "installa il tuo tool e una wordlist in `~/lab/lezione-16`.")
 
     d.h2("Passo 1 · Buca il login debole (+45)")
-    d.p("Leggi il tuo strumento e lancialo: prova ogni password della lista finche' una "
+    d.p("Leggi il tuo strumento e lancialo: prova ogni password della lista finché una "
         "funziona.")
     d.code([
         "cd ~/lab/lezione-16",
@@ -50,7 +51,7 @@ def dispensa(d):
 
     d.h2("Passo 2 · Sbatti contro la difesa (+25)")
     d.p("Ora prova lo stesso attacco contro il login forte. Dopo pochi tentativi ti "
-        "blocca: e' il rate limiting.")
+        "blocca: è il rate limiting.")
     d.code([
         "python3 bruteforce.py http://10.10.10.20:8095/forte sara.verdi passwords.txt",
     ])
@@ -69,6 +70,47 @@ def dispensa(d):
     d.p("Nota la differenza vista dal vivo: contro `/debole` il tool vince in pochi "
         "secondi; contro `/forte`, con la stessa lista, non arriva nemmeno alla password "
         "giusta.")
+    comune.studio(
+        d,
+        approfondimenti=[
+            ('Attacco online e offline, ed entropia delle password', "Ci sono due scenari di attacco alle password. Online: si provano le password direttamente sul login del sito; è lento e si può fermare con rate limiting e lockout (la difesa di oggi). Offline: l'attaccante ha già rubato gli hash e prova a casa milioni di tentativi al secondo, senza limiti, contro il proprio computer (lo vedremo nel cracking). Cio' che rende dura una password è l'entropia, cioè quanto è imprevedibile: una passphrase lunga di parole casuali (quattro-cinque parole) batte una password corta piena di simboli, perché offre molte più combinazioni ed è anche più facile da ricordare. La lunghezza, più della complessità, è l'arma vera."),
+        ],
+        sintesi=[
+            "Il brute force prova tante password finché una funziona; l'attacco a dizionario usa liste di password probabili.",
+            'Con hash veloci e password comuni (rockyou), un PC ne prova milioni al secondo.',
+            "Un tool proprio (o hydra) automatizza l'invio dei tentativi al login.",
+            "La difesa efficace è il rate limiting/lockout: dopo pochi errori si blocca.",
+            "Password robuste, 2FA e CAPTCHA rendono l'attacco impraticabile.",
+        ],
+        glossario=[
+            ('Brute force', "provare molte password finché una è corretta"),
+            ('Attacco a dizionario', 'brute force mirato che usa una lista di password probabili'),
+            ('Wordlist', "l'elenco di password da provare (es. rockyou)"),
+            ('hydra', 'strumento che automatizza il brute force di login'),
+            ('Rate limiting', 'limitare i tentativi in un dato tempo'),
+            ('Lockout', "bloccare l'accesso dopo N tentativi falliti"),
+            ('2FA', 'autenticazione a due fattori: serve un secondo elemento oltre la password'),
+        ],
+        errori=[
+            'Permettere tentativi illimitati sul login: invito al brute force.',
+            'Usare password comuni o corte: sono nelle wordlist.',
+            'Sbagliare la stringa di fallimento in hydra e segnare tutto come valido.',
+            "Fidarsi solo della password: senza 2FA, se cade, si è dentro.",
+        ],
+        domande=[
+            "Che differenza c'è tra brute force puro e attacco a dizionario?",
+            "Perché hash veloci e password comuni rendono il brute force facile?",
+            'Come ferma un attacco il rate limiting?',
+            "Perché il 2FA protegge anche se la password viene indovinata?",
+            "Cosa cambia, nell'attacco, tra il login /debole e quello /forte del lab?",
+        ],
+        collegamenti=[
+            "Lezione 15: l'altra via per entrare in un account (cookie/sessioni).",
+            'Lezione 19-20: hash delle password e cracking a dizionario.',
+            'Lezione 36: come i tentativi falliti appaiono nei log del difensore.',
+        ],
+    )
+
 
     d.h2("Punteggio della Lezione 16")
     d.table(["Obiettivo", "Come", "Punti"], [
@@ -82,7 +124,7 @@ def manuale(d):
         "**Lezione 16** · Brute force del login e difesa (Blocco 4, con tool).",
         "**Tempi:** 25 min teoria · 80 min pratica · 15 min difesa.",
         "**Prerequisiti:** bersaglio acceso; hydra sulla Kali (Lezione 2). Non richiede la "
-        "Banca (il servizio :8095 e' autonomo).",
+        "Banca (il servizio :8095 è autonomo).",
         "**Deliverable studente:** 2 flag (70 punti) + un brute forcer riutilizzabile.",
     ])
     d.h1("Obiettivi didattici")
@@ -103,7 +145,7 @@ def manuale(d):
     d.h2("kali.sh (sulla Kali)")
     d.bullets([
         "Crea `~/lab/lezione-16/bruteforce.py` (tool) e `passwords.txt` (wordlist con la "
-        "password giusta in settima posizione, dopo 6 distrattori: cosi' contro /forte il "
+        "password giusta in settima posizione, dopo 6 distrattori: così contro /forte il "
         "blocco scatta prima di trovarla).",
     ])
     d.h1("Soluzioni e valori delle flag")
@@ -115,7 +157,7 @@ def manuale(d):
     ], widths=[900, 5626, 2500])
     d.h1("Rigiocare, resettare, troubleshooting")
     d.table(["Sintomo", "Causa e rimedio"], [
-        ["/forte non blocca", "il blocco e' per IP e dura 60s; se sono passati 60s si "
+        ["/forte non blocca", "il blocco è per IP e dura 60s; se sono passati 60s si "
          "sblocca; rilanciare l'attacco subito"],
         ["/debole non trova la password", "verificare che passwords.txt contenga "
          "'primavera' (lo crea kali.sh)"],
@@ -124,6 +166,6 @@ def manuale(d):
         ["voglio i valori", "`sudo cat /opt/lab/banca-app/flags.env`"],
     ], widths=[2800, 6226])
     d.h1("Nota di progetto")
-    d.p("Il login e' un servizio dedicato (:8095), non quello della Banca, perche' il "
-        "cookie della Banca e' prevedibile (Lezione 15) e renderebbe inutile il brute "
-        "force. Cosi' la lezione resta pulita: qui si vince solo indovinando la password.")
+    d.p("Il login è un servizio dedicato (:8095), non quello della Banca, perché il "
+        "cookie della Banca è prevedibile (Lezione 15) e renderebbe inutile il brute "
+        "force. Così la lezione resta pulita: qui si vince solo indovinando la password.")

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import comune
 NUM = 27
 SLUG = "difese-di-rete"
 TITOLO = "Difese di rete: segmentazione, firewall, IDS"
@@ -7,8 +8,8 @@ TITOLO = "Difese di rete: segmentazione, firewall, IDS"
 def dispensa(d):
     d.box("blu", "In breve", [
         "**Durata:** 2 ore.  Struttura: 25 min teoria · 80 min pratica · 15 min difesa.",
-        "**Obiettivo:** passare dalla parte del difensore (blue team): chiudere cio' che "
-        "e' esposto con un firewall e accorgersi di chi scansiona con un IDS.",
+        "**Obiettivo:** passare dalla parte del difensore (blue team): chiudere ciò che "
+        "è esposto con un firewall e accorgersi di chi scansiona con un IDS.",
         "**Al termine sai:** scrivere una regola di firewall per bloccare una porta, "
         "capire la segmentazione della rete e come un IDS a porte esca rileva le scansioni.",
         "**Flag in palio:** 2 flag (70 punti).",
@@ -20,17 +21,17 @@ def dispensa(d):
         "traffico, dirottato vittime. Ora giri la medaglia. Un buon difensore riduce la "
         "superficie d'attacco (meno porte aperte), separa le reti (se una parte cade, le "
         "altre reggono) e mette dei sensori che avvisano quando qualcuno prova ad "
-        "attaccare. Difendere non e' un muro solo: sono piu' strati.")
+        "attaccare. Difendere non è un muro solo: sono più strati.")
 
     d.h2("I tre pilastri")
     d.table(["Difesa", "Cosa fa", "Esempio"], [
         ["Firewall", "decide quale traffico passa e quale no", "iptables, nftables, ufw"],
         ["Segmentazione", "divide la rete in zone isolate", "VLAN, sottoreti separate"],
-        ["IDS/IPS", "rileva (e blocca) attivita' sospette", "Snort, Suricata, porte esca"],
+        ["IDS/IPS", "rileva (e blocca) attività sospette", "Snort, Suricata, porte esca"],
     ], widths=[1800, 4226, 3000])
 
     d.h2("Il firewall in una riga")
-    d.p("Un firewall e' una lista di regole: per ogni pacchetto decide se accettarlo "
+    d.p("Un firewall è una lista di regole: per ogni pacchetto decide se accettarlo "
         "(ACCEPT) o buttarlo (DROP). Bloccare una porta significa aggiungere una regola "
         "di DROP per quella porta.")
     d.code([
@@ -43,7 +44,7 @@ def dispensa(d):
         "accende un servizio insicuro su :9099 e un IDS a porte esca.")
 
     d.h2("Passo 1 · Chiudi la porta insicura (+40)")
-    d.p("Il servizio su :9099 non serve a nessuno ed e' esposto. Chiudilo col firewall e "
+    d.p("Il servizio su :9099 non serve a nessuno ed è esposto. Chiudilo col firewall e "
         "verifica.")
     d.code([
         "# sul bersaglio (come root):",
@@ -65,16 +66,16 @@ def dispensa(d):
         "# sul bersaglio, leggi l'allarme (con la flag):",
         "cat /opt/lab/lab27/allarmi.log",
     ])
-    d.box("blu", "Perche' le porte esca funzionano", items=[
-        "Sono porte che nessun servizio reale usa: una connessione li' e' quasi sempre "
+    d.box("blu", "Perché le porte esca funzionano", items=[
+        "Sono porte che nessun servizio reale usa: una connessione lì è quasi sempre "
         "ostile.",
-        "Toccare piu' porte esca in pochi secondi e' la firma di una scansione.",
-        "E' l'idea dei veri IDS e degli honeypot: attirare e riconoscere l'attaccante.",
+        "Toccare più porte esca in pochi secondi è la firma di una scansione.",
+        "È l'idea dei veri IDS e degli honeypot: attirare e riconoscere l'attaccante.",
     ])
 
-    d.h1("Parte 3 · Ribaltamento: la difesa in profondita' (15 min)")
+    d.h1("Parte 3 · Ribaltamento: la difesa in profondità (15 min)")
     d.box("verde", "Mettere insieme le difese", items=[
-        "Chiudi tutto cio' che non serve: ogni porta aperta e' una possibile porta "
+        "Chiudi tutto ciò che non serve: ogni porta aperta è una possibile porta "
         "d'ingresso.",
         "Segmenta: se il bersaglio fosse in una VLAN separata, uno scanner nella rete "
         "studenti non lo vedrebbe nemmeno.",
@@ -82,6 +83,47 @@ def dispensa(d):
         "disastro.",
         "Aggiorna e cifra (dai blocchi scorsi): il firewall non basta da solo.",
     ])
+    comune.studio(
+        d,
+        approfondimenti=[
+            ('Firewall, IDS e IPS: chi ferma e chi avvisa', "Un firewall decide quali pacchetti passano in base a regole; quelli moderni sono 'stateful', cioè ricordano le connessioni già aperte e lasciano passare le risposte attese. La strategia migliore è 'default-deny': si blocca tutto e si aprono solo le poche cose necessarie, l'opposto di aprire tutto e chiudere qualche buco. Accanto al firewall ci sono l'IDS, che rileva le attività sospette e avvisa, e l'IPS, che le rileva e le blocca automaticamente. La segmentazione, infine, divide la rete in zone (VLAN): se un attaccante entra in una zona non raggiunge le altre. Difesa in profondità vuol dire proprio questo: più strati diversi, così che superarne uno non basti a vincere."),
+        ],
+        sintesi=[
+            "Difendere una rete significa ridurre la superficie d'attacco e accorgersi degli attacchi.",
+            'Tre pilastri: firewall (cosa passa), segmentazione (dividere in zone), IDS (rilevare le minacce).',
+            "Un firewall è una lista di regole: bloccare una porta = aggiungere una regola di DROP.",
+            'Un IDS a porte esca (honeypot) rileva le scansioni: nessun utente vero tocca quelle porte.',
+            "La difesa è a strati: chiudere l'inutile, segmentare, rilevare, aggiornare e cifrare.",
+        ],
+        glossario=[
+            ('Firewall', 'filtra il traffico secondo regole (ACCEPT/DROP)'),
+            ('iptables', 'lo strumento classico per gestire il firewall di Linux'),
+            ('DROP', 'regola che scarta silenziosamente i pacchetti'),
+            ('Segmentazione', 'dividere la rete in zone isolate (VLAN)'),
+            ('IDS', "Intrusion Detection System: rileva attività sospette"),
+            ('Honeypot / porta esca', "trappola che attira e smaschera l'attaccante"),
+            ("Superficie d'attacco", "l'insieme dei punti da cui si può essere attaccati"),
+        ],
+        errori=[
+            'Lasciare aperte porte e servizi inutili.',
+            'Raccogliere log e regole ma non guardarli mai.',
+            "Aprire una regola di firewall troppo larga 'per comodità'.",
+            "Bloccare per sbaglio la porta 22 (SSH) e perdere l'accesso.",
+        ],
+        domande=[
+            "Come blocchi una porta con iptables e come verifichi l'effetto?",
+            "Cos'è la segmentazione e perché aiuta?",
+            'Come fa un honeypot a porte esca a rilevare una scansione?',
+            "Perché con -sS l'honeypot non scatta e con -sT si?",
+            "Cosa vuol dire 'difesa in profondità'?",
+        ],
+        collegamenti=[
+            'Lezione 8-9: le scansioni che qui impari a rilevare e bloccare.',
+            'Lezione 35: hardening del singolo sistema.',
+            'Lezione 36-37: log, rilevamento e risposta agli incidenti.',
+        ],
+    )
+
 
     d.h2("Punteggio della Lezione 27")
     d.table(["Obiettivo", "Come", "Punti"], [
@@ -131,10 +173,10 @@ def manuale(d):
         ["ripristinare il firewall", "`sudo iptables -D INPUT -p tcp --dport 9099 -j DROP`"],
     ], widths=[3000, 6026])
     d.h1("Da PROVARE sul bersaglio reale x86")
-    d.p("La logica dell'IDS e' verificata in locale. La parte firewall usa iptables sul "
+    d.p("La logica dell'IDS è verificata in locale. La parte firewall usa iptables sul "
         "bersaglio (Ubuntu): da provare in aula che `iptables -C` riconosca la regola e "
         "che da Kali la porta 9099 risulti 'filtered'. Con `-sS` da root l'honeypot non "
         "scatta: indicare agli studenti `-sT`.")
     d.h1("Nota di sicurezza")
-    d.p("La regola iptables non tocca SSH (porta 22), quindi non c'e' rischio di perdere "
-        "l'accesso. A fine lezione si puo' ripristinare con la regola -D indicata sopra.")
+    d.p("La regola iptables non tocca SSH (porta 22), quindi non c'è rischio di perdere "
+        "l'accesso. A fine lezione si può ripristinare con la regola -D indicata sopra.")

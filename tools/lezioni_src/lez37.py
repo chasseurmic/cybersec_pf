@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import comune
 NUM = 37
 SLUG = "incident-response"
 TITOLO = "Incident response di base"
@@ -7,7 +8,7 @@ TITOLO = "Incident response di base"
 def dispensa(d):
     d.box("blu", "In breve", [
         "**Durata:** 2 ore.  Struttura: 25 min teoria · 80 min pratica · 15 min difesa.",
-        "**Obiettivo:** sapere cosa fare quando un sistema e' stato compromesso: seguire "
+        "**Obiettivo:** sapere cosa fare quando un sistema è stato compromesso: seguire "
         "le fasi dell'incident response per contenere il danno, cacciare l'attaccante e "
         "rimettere in sicurezza.",
         "**Al termine sai:** identificare le tracce di una compromissione, contenere "
@@ -17,7 +18,7 @@ def dispensa(d):
 
     d.h1("Parte 1 · Un piano per il giorno peggiore (teoria, 25 min)")
     d.h2("Il caso reale")
-    d.p("Prima o poi qualcosa passa. La differenza tra un incidente e un disastro e' come "
+    d.p("Prima o poi qualcosa passa. La differenza tra un incidente e un disastro è come "
         "reagisci nei primi minuti. Chi improvvisa fa danni (cancella prove, lascia "
         "porte aperte). Chi ha un piano contiene subito e recupera in fretta. Nel Blocco "
         "scorso hai scoperto la compromissione nei log; ora la gestisci.")
@@ -25,11 +26,11 @@ def dispensa(d):
     d.h2("Le sei fasi (PICERL)")
     d.table(["Fase", "Cosa fai"], [
         ["Preparazione", "avere strumenti, contatti e procedure PRIMA che accada"],
-        ["Identificazione", "capire cosa e' successo: account, file, connessioni sospette"],
+        ["Identificazione", "capire cosa è successo: account, file, connessioni sospette"],
         ["Contenimento", "fermare l'emorragia: isolare, bloccare account e IP"],
         ["Eradicazione", "rimuovere l'attaccante: persistenza, backdoor, malware"],
         ["Recupero", "ripristinare i sistemi puliti e rimetterli online con cautela"],
-        ["Lezioni apprese", "capire come e' entrato e chiudere quella falla"],
+        ["Lezioni apprese", "capire come è entrato e chiudere quella falla"],
     ], widths=[2400, 6626])
 
     d.h1("Parte 2 · Bonifica il sistema (pratica, 80 min)")
@@ -60,20 +61,60 @@ def dispensa(d):
     d.box("blu", "Recupero e lezioni apprese", items=[
         "Recupero: cambiare le password compromesse, ripristinare da backup puliti, "
         "rimettere online con monitoraggio aumentato.",
-        "Lezioni apprese: come e' entrato? (nel nostro caso, brute force su un account "
+        "Lezioni apprese: come è entrato? (nel nostro caso, brute force su un account "
         "debole) Chiudere quella falla (password forti, rate limiting, 2FA).",
         "Documentare tutto: timeline, azioni, IOC. Serve per migliorare e, se necessario, "
-        "per le autorita'.",
+        "per le autorità.",
     ])
 
     d.h1("Parte 3 · Ribaltamento: chiudere il cerchio (15 min)")
     d.box("verde", "Trasformare l'incidente in difesa", items=[
         "Gli IOC raccolti (IP, account, file) diventano regole di blocco e rilevamento.",
         "La falla sfruttata diventa un punto della checklist di hardening (Lezione 35).",
-        "L'esperienza aggiorna il piano: la prossima volta si reagisce ancora piu' in "
+        "L'esperienza aggiorna il piano: la prossima volta si reagisce ancora più in "
         "fretta.",
         "Non colpevolizzare le persone: si migliorano i processi (blameless postmortem).",
     ])
+    comune.studio(
+        d,
+        approfondimenti=[
+            ('La timeline, la comunicazione e le prove', "Durante un incidente due cose contano quanto le azioni tecniche. La prima è la timeline: ricostruire in ordine cosa è successo e quando (dal primo accesso sospetto alla scoperta), perché senza timeline non capisci l'estensione del danno né come chiuderla. La seconda è la comunicazione: chi va avvisato, cosa si dice e quando, evitando sia il silenzio sia il panico. Se l'incidente potrebbe avere seguiti legali, si preservano le prove senza alterarle (la 'catena di custodia'): per questo non si cancella tutto d'impulso. Infine il postmortem, l'analisi finale, deve essere 'senza colpe': non serve trovare un colpevole, serve capire come è entrato l'attaccante e migliorare i processi perché non riaccada."),
+        ],
+        sintesi=[
+            "La differenza tra un incidente e un disastro è come reagisci nei primi minuti: serve un piano.",
+            'Le sei fasi (PICERL): Preparazione, Identificazione, Contenimento, Eradicazione, Recupero, Lezioni apprese.',
+            'Contenere: isolare, bloccare account e IP. Eradicare: rimuovere persistenza e backdoor.',
+            'Recupero: password nuove, ripristino da backup puliti, monitoraggio aumentato.',
+            "Lezioni apprese: capire come è entrato e chiudere quella falla; migliorare i processi, non colpevolizzare.",
+        ],
+        glossario=[
+            ('Incident response', 'la gestione strutturata di una compromissione'),
+            ('PICERL', 'le sei fasi: Preparazione, Identificazione, Contenimento, Eradicazione, Recupero, Lezioni'),
+            ('Contenimento', "fermare l'emorragia: isolare, bloccare"),
+            ('Eradicazione', "rimuovere l'attaccante (account, cron, backdoor)"),
+            ('Persistenza', "il meccanismo con cui l'attaccante resta (es. un cron)"),
+            ('Postmortem', "l'analisi finale, senza colpevolizzare (blameless)"),
+        ],
+        errori=[
+            'Improvvisare: cancellare prove o lasciare porte aperte.',
+            "Eradicare senza aver prima contenuto: l'attaccante rientra.",
+            "Non capire la falla d'ingresso: si ripresenta uguale.",
+            'Cercare un colpevole invece di migliorare i processi.',
+        ],
+        domande=[
+            "Quali sono le sei fasi dell'incident response?",
+            'Come contieni un account ostile e un IP attaccante?',
+            'Cosa significa eradicare la persistenza?',
+            'Cosa comprende la fase di recupero?',
+            "Perché un postmortem deve essere 'senza colpe'?",
+        ],
+        collegamenti=[
+            'Lezione 36: scoprire la compromissione nei log.',
+            'Lezione 35: chiudere la falla sfruttata (hardening).',
+            'Lezione 34: gli IOC che guidano la bonifica.',
+        ],
+    )
+
 
     d.h2("Punteggio della Lezione 37")
     d.table(["Obiettivo", "Come", "Punti"], [
@@ -117,9 +158,9 @@ def manuale(d):
         ["cron ancora presente", "rimuovere `/etc/cron.d/lab37-backdoor`"],
         ["IP non bloccato", "regola esatta: `INPUT -s 10.10.10.66 -j DROP`"],
         ["rigiocare", "rilanciare `lab 37` (ricrea account, cron; l'IP resta bloccato "
-         "finche' non lo togli con -D)"],
+         "finché non lo togli con -D)"],
     ], widths=[2800, 6226])
     d.h1("Nota di sicurezza")
-    d.p("La persistenza seminata e' un cron innocuo (un echo scartato): nessun rischio. "
-        "L'account `svc-update` e le regole vanno rimossi a fine corso. `lab 37` e' "
+    d.p("La persistenza seminata è un cron innocuo (un echo scartato): nessun rischio. "
+        "L'account `svc-update` e le regole vanno rimossi a fine corso. `lab 37` è "
         "idempotente e ricrea la scena per rigiocare l'esercizio.")

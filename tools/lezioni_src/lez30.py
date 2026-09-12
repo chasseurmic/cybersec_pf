@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import comune
 NUM = 30
 SLUG = "riconoscere-difendersi-phishing"
 TITOLO = "Riconoscere e difendersi dal phishing"
@@ -23,7 +24,7 @@ def dispensa(d):
 
     d.h2("Dove finisci davvero: si legge da destra")
     d.p("In un dominio, la parte che conta sono le ultime due etichette prima della prima "
-        "barra singola. Tutto quello che viene prima e' sottodominio o trucco.")
+        "barra singola. Tutto quello che viene prima è sottodominio o trucco.")
     d.table(["Indirizzo", "Dove finisci davvero"], [
         ["bancadellascuola.local/login", "bancadellascuola.local (vero)"],
         ["login.bancadellascuola.local/", "bancadellascuola.local (vero, sottodominio)"],
@@ -34,7 +35,7 @@ def dispensa(d):
 
     d.h1("Parte 2 · Smaschera i link (pratica, 80 min)")
     d.p("Sulla Kali `lab 30` semina una lista di URL e un ispettore. Il dominio vero della "
-        "Banca e' `bancadellascuola.local`.")
+        "Banca è `bancadellascuola.local`.")
 
     d.h2("Passo 1 · Riconosci i link falsi (+40)")
     d.p("Leggi la lista e indica i numeri dei link che NON portano alla Banca vera.")
@@ -53,15 +54,54 @@ def dispensa(d):
 
     d.h1("Parte 3 · Ribaltamento difensivo (15 min)")
     d.box("verde", "La checklist antiphishing", items=[
-        "Guarda il dominio (ultime due etichette): e' davvero quello giusto?",
-        "Non fidarti del testo del link: puo' mostrare una cosa e portare altrove "
+        "Guarda il dominio (ultime due etichette): è davvero quello giusto?",
+        "Non fidarti del testo del link: può mostrare una cosa e portare altrove "
         "(passaci sopra o ispezionalo).",
         "Diffida di urgenza e minacce (si ricollega al social engineering).",
         "Non inserire credenziali arrivando da un link: apri il sito dai preferiti o "
         "digitando l'indirizzo.",
-        "Attiva l'autenticazione a due fattori: e' la rete di sicurezza se abbocchi.",
+        "Attiva l'autenticazione a due fattori: è la rete di sicurezza se abbocchi.",
         "Segnala le email sospette: proteggi anche gli altri.",
     ])
+    comune.studio(
+        d,
+        approfondimenti=[
+            ('La checklist antiphishing, ragionata', "Riconoscere un phishing è un metodo, non un colpo d'occhio. Primo, il mittente: l'indirizzo vero (non il nome mostrato) è plausibile? Secondo, il link: dove porta davvero il dominio, leggendo le ultime due etichette prima della prima barra? Terzo, il tono: c'è urgenza, minaccia, un premio troppo bello? Quarto, la richiesta: ti chiedono credenziali o un pagamento cliccando un link? Nel dubbio non si clicca: si apre il sito dai preferiti o digitando l'indirizzo. Infine, la rete di sicurezza: con il 2FA, anche se una volta abbocchi, la password rubata da sola non basta. E le email sospette si segnalano, perché proteggere se stessi e proteggere gli altri qui sono la stessa cosa."),
+        ],
+        sintesi=[
+            "La maggior parte del phishing si smaschera leggendo bene l'indirizzo.",
+            'Il dominio che conta sono le ultime due etichette prima della prima barra singola.',
+            "login.banca.local è ancora banca.local; banca.local.truffa.ru è truffa.ru.",
+            "Non fidarsi del testo di un link: può mostrare una cosa e portare altrove.",
+            'Difese personali: controlla il dominio, apri i siti dai preferiti, attiva il 2FA.',
+        ],
+        glossario=[
+            ('Dominio', "le ultime due etichette dell'host (es. esempio.com)"),
+            ('Sottodominio', 'una parte a sinistra del dominio (login.esempio.com)'),
+            ('Lookalike', 'dominio somigliante a quello vero, usato per ingannare'),
+            ('Barra degli indirizzi', 'dove il browser mostra il vero URL'),
+            ('2FA', 'secondo fattore: rete di sicurezza se la password viene rubata'),
+        ],
+        errori=[
+            'Leggere il dominio da sinistra invece che da destra.',
+            'Fidarsi del testo del link senza controllarne la destinazione.',
+            'Inserire credenziali arrivando da un link ricevuto.',
+            'Ignorare gli avvisi del browser.',
+        ],
+        domande=[
+            'Come si legge un dominio per capire dove porta davvero?',
+            "banca.local.verifica-conto.ru: qual è il dominio reale?",
+            "Perché non ci si deve fidare del testo di un link?",
+            'Quali abitudini ti proteggono dal phishing?',
+            "Perché il 2FA è una rete di sicurezza?",
+        ],
+        collegamenti=[
+            'Lezione 29: la pagina di phishing, qui vista dal lato della difesa.',
+            'Lezione 22: certificati e avvisi del browser.',
+            "Lezione 28: riconoscere le leve dell'inganno.",
+        ],
+    )
+
 
     d.h2("Punteggio della Lezione 30")
     d.table(["Obiettivo", "Come", "Punti"], [
@@ -96,16 +136,16 @@ def manuale(d):
         ["2", "dominio del link 4 = verifica-conto.ru ; lab30-verifica dominio verifica-conto.ru",
          "FLAG{link_smascherato}"],
     ], widths=[700, 6026, 2300])
-    d.p("Perche': 1 e 3 sono su bancadellascuola.local (3 e' un sottodominio, vero); 2 e' "
+    d.p("Perché: 1 e 3 sono su bancadellascuola.local (3 è un sottodominio, vero); 2 è "
         ".xyz, 4 finisce su verifica-conto.ru, 5 su secure-login.com.")
     d.h1("Troubleshooting")
     d.table(["Sintomo", "Causa e rimedio"], [
         ["phishing non passa", "servono esattamente 2 4 5 (ordine libero); niente altri numeri"],
-        ["dominio non passa", "e' verifica-conto.ru (ultime due etichette del link 4)"],
-        ["confusione sui sottodomini", "ribadire: si legge da destra; login.banca.local e' "
+        ["dominio non passa", "è verifica-conto.ru (ultime due etichette del link 4)"],
+        ["confusione sui sottodomini", "ribadire: si legge da destra; login.banca.local è "
          "ancora banca.local"],
     ], widths=[2800, 6226])
     d.h1("Nota didattica")
-    d.p("Chiude il Blocco 7. La coppia L29 (costruire) + L30 (difendersi) e' molto "
+    d.p("Chiude il Blocco 7. La coppia L29 (costruire) + L30 (difendersi) è molto "
         "efficace: gli studenti smontano l'inganno dopo averlo montato. Utile mostrare "
         "esempi reali di email di phishing ricevute davvero (oscurando i dati).")

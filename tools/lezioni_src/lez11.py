@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import comune
 NUM = 11
 SLUG = "come-funziona-il-web"
 TITOLO = "Come funziona il web (HTTP, DevTools, curl)"
@@ -9,7 +10,7 @@ def dispensa(d):
         "**Durata:** 2 ore.  Struttura: 25 min teoria · 80 min pratica · 15 min difesa.",
         "**Obiettivo:** capire il protocollo HTTP (richieste, risposte, metodi, header, "
         "codici di stato, cookie) e imparare a parlarlo con curl e con gli Strumenti per "
-        "sviluppatori del browser. E' la base di tutto il blocco sulle web application.",
+        "sviluppatori del browser. È la base di tutto il blocco sulle web application.",
         "**Al termine sai:** leggere e costruire richieste HTTP, distinguere GET e POST, "
         "usare header e cookie, e riconoscere i codici di stato.",
         "**Flag in palio:** 4 flag (70 punti).",
@@ -19,10 +20,10 @@ def dispensa(d):
 
     d.h2("Il caso reale")
     d.p("Ogni volta che apri un sito, il tuo browser manda una richiesta HTTP e il server "
-        "risponde. Sembra magia, ma e' solo testo che viaggia. Gli attacchi web (che "
+        "risponde. Sembra magia, ma è solo testo che viaggia. Gli attacchi web (che "
         "vedremo nelle prossime lezioni) nascono tutti dal manipolare quel testo: "
         "cambiare un parametro, aggiungere un header, riutilizzare un cookie. Per farlo "
-        "bisogna prima capire com'e' fatto il dialogo. Oggi impariamo a parlare HTTP a "
+        "bisogna prima capire com'è fatto il dialogo. Oggi impariamo a parlare HTTP a "
         "mano, senza browser, con curl.")
 
     d.h2("Richiesta e risposta")
@@ -43,8 +44,8 @@ def dispensa(d):
 
     d.h2("Header e cookie")
     d.p("Gli header sono coppie nome-valore che accompagnano richiesta e risposta (per "
-        "esempio `Content-Type`, `Server`, header personalizzati). Il cookie e' un header "
-        "speciale: il server te lo da', il browser lo rimanda a ogni richiesta. E' cosi' "
+        "esempio `Content-Type`, `Server`, header personalizzati). Il cookie è un header "
+        "speciale: il server te lo dà, il browser lo rimanda a ogni richiesta. È così "
         "che un sito ti riconosce dopo il login (lo approfondiamo nella lezione su "
         "sessioni e cookie).")
 
@@ -79,12 +80,12 @@ def dispensa(d):
         "sviluppatori):"), items=[
         "Scheda Rete: vedi ogni richiesta, i suoi header e la risposta.",
         "Scheda Archiviazione: vedi i cookie salvati.",
-        "Tasto destro su una richiesta, 'Copia come cURL': ti da' il comando curl pronto.",
+        "Tasto destro su una richiesta, 'Copia come cURL': ti dà il comando curl pronto.",
     ])
 
     d.h1("Parte 3 · Ribaltamento difensivo (15 min)")
-    d.p("Se un attaccante puo' ricostruire ogni richiesta a mano, la sicurezza non puo' "
-        "basarsi su cio' che il browser 'nasconde'. Tutto cio' che arriva dal client va "
+    d.p("Se un attaccante può ricostruire ogni richiesta a mano, la sicurezza non può "
+        "basarsi su ciò che il browser 'nasconde'. Tutto ciò che arriva dal client va "
         "considerato non fidato.")
     d.box("verde", "Principi per chi sviluppa", items=[
         "Non fidarsi mai dei dati del client: parametri, header e cookie possono essere "
@@ -93,8 +94,49 @@ def dispensa(d):
         "browser.",
         "I cookie di sessione vanno protetti (li vedremo: HttpOnly, Secure, valori non "
         "indovinabili).",
-        "Gli header di risposta non devono rivelare piu' del necessario.",
+        "Gli header di risposta non devono rivelare più del necessario.",
     ])
+    comune.studio(
+        d,
+        approfondimenti=[
+            ('Anatomia di una richiesta e di una risposta HTTP', "Una richiesta HTTP è testo in chiaro fatto di: una riga iniziale (metodo, percorso, versione, es. GET /login HTTP/1.1), una serie di header (Host, User-Agent, Cookie, Content-Type...), una riga vuota e, solo per POST/PUT, un corpo con i dati. La risposta ha la stessa forma: riga di stato (HTTP/1.1 200 OK), header (Server, Set-Cookie, Content-Type) e il corpo (la pagina). Un dettaglio fondamentale: HTTP è senza stato (stateless), cioè ogni richiesta è indipendente e il server di per se' non ricorda le precedenti. Per 'ricordarti' dopo il login serve un trucco, il cookie. Vedere queste parti con curl -v ti fa capire che tutto ciò che il browser invia lo puoi costruire e modificare tu."),
+        ],
+        sintesi=[
+            "Il web è fatto di richieste e risposte HTTP: testo che viaggia, che si può leggere e manipolare.",
+            'GET chiede una pagina (parametri nella URL); POST invia dati (nel corpo, es. i login).',
+            'I codici di stato: 200 ok, 301/302 redirect, 403 vietato, 404 non trovato, 500 errore server.',
+            "Header e cookie accompagnano ogni richiesta; il cookie fa riconoscere l'utente dopo il login.",
+            "Regola d'oro: i dati del client (parametri, header, cookie) non sono fidati, si falsificano con curl.",
+        ],
+        glossario=[
+            ('HTTP', 'il protocollo del web: richieste e risposte testuali'),
+            ('GET / POST', 'chiedere una risorsa / inviare dati al server'),
+            ('Codice di stato', "numero che dice l'esito (200, 404, 500, ...)"),
+            ('Header', 'coppie nome-valore che accompagnano richiesta e risposta'),
+            ('Cookie', 'header speciale che il browser rimanda per farti riconoscere'),
+            ('curl', 'client HTTP da terminale (-d dati/POST, -H header, -b cookie, -I intestazioni)'),
+            ('DevTools', 'gli Strumenti per sviluppatori del browser (F12)'),
+        ],
+        errori=[
+            "Credere che nascondere un pulsante nel browser impedisca l'azione: si rifa' con curl.",
+            'Mettere i controlli di sicurezza solo lato client invece che sul server.',
+            'Confondere parametri GET (nella URL) con dati POST (nel corpo).',
+            "Fidarsi di header e cookie ricevuti: sono controllati dall'utente.",
+        ],
+        domande=[
+            "Che differenza c'è tra GET e POST?",
+            'Cosa significano i codici 200, 403 e 302?',
+            'A cosa serve un cookie e come lo invii con curl?',
+            "Perché i dati che arrivano dal client non sono fidati?",
+            'Come invii un header personalizzato in una richiesta?',
+        ],
+        collegamenti=[
+            'Lezione 12-18: tutti gli attacchi web partono dal manipolare queste richieste.',
+            'Lezione 15: i cookie e le sessioni approfonditi.',
+            "Lezione 1: curl già usato per leggere la pagina della Banca.",
+        ],
+    )
+
 
     d.h2("Punteggio della Lezione 11")
     d.table(["Obiettivo", "Come", "Punti"], [
@@ -140,7 +182,7 @@ def manuale(d):
         ["4", "curl -b 'sessione=valida' .../area-clienti", "FLAG{i_cookie_ti_seguono}"],
     ], widths=[900, 5626, 2500])
     d.p("Credenziali POST: utente `admin`, password `banca123` (didattiche, in chiaro). "
-        "Il login del portale e' finto (confronto fisso); il login con database "
+        "Il login del portale è finto (confronto fisso); il login con database "
         "vulnerabile a SQL injection arriva nella Lezione 12.")
 
     d.h1("Rigiocare, resettare, troubleshooting")
@@ -151,7 +193,7 @@ def manuale(d):
         ["fermare a fine lezione", "`systemctl disable --now lab11-portale`"],
     ], widths=[3000, 6026])
 
-    d.h1("Nota di continuita'")
+    d.h1("Nota di continuità")
     d.p("Il portale su :8090 resta separato dalla Banca transazionale su :8080 (Lezione "
         "12) per non sovrapporsi. Firefox sulla Kali permette di mostrare gli stessi "
-        "scambi con gli Strumenti per sviluppatori, utile per gli studenti piu' visivi.")
+        "scambi con gli Strumenti per sviluppatori, utile per gli studenti più visivi.")

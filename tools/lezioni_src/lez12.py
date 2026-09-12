@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import comune
 NUM = 12
 SLUG = "banca-della-scuola-sqli"
 TITOLO = "Banca della Scuola e SQL injection base"
@@ -8,9 +9,9 @@ def dispensa(d):
     d.box("blu", "In breve", [
         "**Durata:** 2 ore.  Struttura: 25 min teoria · 80 min pratica · 15 min difesa.",
         "**Obiettivo:** conoscere la Banca della Scuola (la web app bersaglio del blocco) "
-        "e sfruttare la vulnerabilita' piu' famosa del web: la SQL injection, per entrare "
+        "e sfruttare la vulnerabilità più famosa del web: la SQL injection, per entrare "
         "senza password e per leggere dati riservati.",
-        "**Al termine sai:** cos'e' una query SQL, come nasce la SQL injection, e come "
+        "**Al termine sai:** cos'è una query SQL, come nasce la SQL injection, e come "
         "bypassare un login e far 'parlare' un database vulnerabile.",
         "**Flag in palio:** 2 flag (70 punti). I valori sono diversi su ogni macchina.",
     ])
@@ -18,20 +19,20 @@ def dispensa(d):
     d.h1("Parte 1 · Quando il sito si fida troppo (teoria, 25 min)")
 
     d.h2("Il caso reale")
-    d.p("La SQL injection e' una delle cause piu' comuni di grandi furti di dati nella "
-        "storia di internet. Il meccanismo e' sempre lo stesso: un sito prende quello che "
+    d.p("La SQL injection è una delle cause più comuni di grandi furti di dati nella "
+        "storia di internet. Il meccanismo è sempre lo stesso: un sito prende quello che "
         "scrivi in un campo (per esempio l'utente del login) e lo incolla dentro un "
         "comando per il database, senza controllarlo. Se scrivi qualcosa di furbo, quel "
         "qualcosa non viene trattato come testo, ma come parte del comando: e a quel "
         "punto comandi tu.")
 
-    d.h2("Cos'e' una query e dove nasce il problema")
+    d.h2("Cos'è una query e dove nasce il problema")
     d.p("Per controllare il login, il sito chiede al database una cosa del tipo: 'dammi "
         "l'utente che ha questo nome e questa password'. In SQL:")
     d.code([
         "SELECT * FROM utenti WHERE username='mario' AND password='segreta'",
     ])
-    d.p("Se il sito costruisce questa frase incollando direttamente cio' che scrivi, tu "
+    d.p("Se il sito costruisce questa frase incollando direttamente ciò che scrivi, tu "
         "puoi cambiarne il senso. Scrivendo come nome utente `admin' --` la frase diventa:")
     d.code([
         "SELECT * FROM utenti WHERE username='admin' -- ' AND password='...'",
@@ -54,7 +55,7 @@ def dispensa(d):
     d.p("Oppure dallo stesso terminale, con curl:")
     d.code(["curl -d \"utente=admin' -- &password=x\" http://10.10.10.20:8080/login"])
     d.p("Entri come amministratore e compare la prima flag. Prova anche il payload "
-        "classico `' OR '1'='1' --` : e' vero per qualsiasi riga.")
+        "classico `' OR '1'='1' --` : è vero per qualsiasi riga.")
 
     d.h2("Passo 2 · Fai parlare il database (+30)")
     d.p("Vai nella pagina 'Cerca conto'. Anche la ricerca costruisce male la query. "
@@ -68,14 +69,14 @@ def dispensa(d):
     ])
     d.p("Nella riga del conto nascosto (la 'tesoreria') trovi la seconda flag.")
 
-    d.box("blu", "Perche' funziona", items=[
+    d.box("blu", "Perché funziona", items=[
         "Il dato dell'utente viene incollato nella query come se fosse codice.",
         "Gli apici `'` chiudono la stringa e permettono di aggiungere condizioni.",
         "Il commento `--` elimina il resto del controllo.",
     ])
 
     d.h1("Parte 3 · Ribaltamento difensivo (15 min)")
-    d.p("La SQL injection e' un problema noto da vent'anni e ha una soluzione precisa e "
+    d.p("La SQL injection è un problema noto da vent'anni e ha una soluzione precisa e "
         "definitiva: non incollare mai i dati dentro la query.")
     d.box("verde", "Come si chiude, davvero", items=[
         "Usare le query parametrizzate (prepared statement): i dati viaggiano separati "
@@ -90,6 +91,47 @@ def dispensa(d):
         "SELECT * FROM utenti WHERE username=? AND password=?",
         "# i valori 'mario' e 'segreta' passano a parte: non possono diventare codice",
     ])
+    comune.studio(
+        d,
+        approfondimenti=[
+            ("Come funziona un database e perché nasce la SQL injection", "Un database relazionale organizza i dati in tabelle (righe e colonne). Le si interroga con SQL: SELECT * FROM utenti WHERE username='mario' AND password='x' chiede le righe che soddisfano la condizione. Il problema nasce quando il programma costruisce quella frase incollando dentro ciò che scrivi, senza distinguere tra 'dati' e 'comando'. Il database riceve un'unica stringa e la interpreta tutta: se nei dati infili apici e parole chiave SQL, cambi la logica della query. La soluzione, le query parametrizzate, separa in modo netto il comando (con dei segnaposto ?) dai dati (passati a parte): così i tuoi apici restano semplice testo e non possono mai diventare istruzioni. È la stessa idea del non mischiare ingredienti crudi e cotti."),
+        ],
+        sintesi=[
+            "La SQL injection nasce quando un sito incolla l'input dell'utente dentro una query senza controllarlo.",
+            "Con ' OR '1'='1' -- o admin' -- si altera il senso della query: si entra senza password.",
+            'Il commento -- (con lo spazio) elimina il resto della query, compreso il controllo della password.',
+            'La stessa falla nella ricerca permette di leggere dati riservati (dump).',
+            'La difesa definitiva sono le query parametrizzate: i dati viaggiano separati dal comando.',
+        ],
+        glossario=[
+            ('SQL', 'il linguaggio con cui si interroga un database'),
+            ('Query', 'una richiesta al database (es. SELECT ... WHERE ...)'),
+            ('SQL injection', 'iniettare SQL tramite un input non controllato'),
+            ('Login bypass', 'entrare senza credenziali sfruttando la SQLi'),
+            ('Commento SQL (--)', "tutto ciò che segue viene ignorato dal database"),
+            ('Query parametrizzata', 'i dati passano a parte (?), non possono diventare codice'),
+            ('Banca della Scuola', "l'app web vulnerabile del corso, su :8080"),
+        ],
+        errori=[
+            'Dimenticare lo spazio dopo -- : il commento non funziona.',
+            "Costruire query concatenando stringhe con l'input: è la causa della SQLi.",
+            'Salvare le password in chiaro nel database (le vedremo hashate).',
+            "Provare SQLi su siti reali: qui è solo la Banca del laboratorio.",
+        ],
+        domande=[
+            "Perché admin' -- permette di entrare senza conoscere la password?",
+            'A cosa serve il commento -- in un payload SQLi?',
+            'Come faresti a leggere tutti i conti dalla pagina di ricerca?',
+            "Qual è la difesa che chiude sia il bypass sia il dump?",
+            "Perché concatenare l'input nella query è pericoloso?",
+        ],
+        collegamenti=[
+            'Lezione 11: le richieste HTTP che qui manipoli.',
+            'Lezione 13: SQL injection avanzata (UNION) e sqlmap.',
+            "Lezione 19-20: perché le password non vanno salvate in chiaro.",
+        ],
+    )
+
 
     d.h2("Punteggio della Lezione 12")
     d.table(["Obiettivo", "Come", "Punti"], [
@@ -101,7 +143,7 @@ def dispensa(d):
 def manuale(d):
     d.box("blu", "Scheda docente", [
         "**Lezione 12** · Banca della Scuola e SQL injection base (Blocco 4, con tool: la "
-        "web app e' la piattaforma di tutto il blocco).",
+        "web app è la piattaforma di tutto il blocco).",
         "**Tempi:** 25 min teoria · 80 min pratica · 15 min difesa.",
         "**Prerequisiti:** bersaglio acceso, Python3 (presente su Ubuntu). Questa lezione "
         "installa la piattaforma usata anche dalle Lezioni 13-18.",
@@ -110,13 +152,13 @@ def manuale(d):
 
     d.h1("Scelta di progetto (importante)")
     d.p("Il brief prevedeva un'app Flask in docker-compose. Per garantire il "
-        "funzionamento OFFLINE nel laboratorio isolato (senza pip ne' pull di immagini) "
-        "la Banca e' realizzata in Python della sola libreria standard (http.server + "
+        "funzionamento OFFLINE nel laboratorio isolato (senza pip né pull di immagini) "
+        "la Banca è realizzata in Python della sola libreria standard (http.server + "
         "sqlite3) e gira come servizio systemd `banca` sul bersaglio, sulla porta 8080, "
-        "al posto della pagina statica nginx. Le vulnerabilita' (SQLi, XSS, controllo "
+        "al posto della pagina statica nginx. Le vulnerabilità (SQLi, XSS, controllo "
         "accessi, path traversal) sono identiche a quelle di una vera app vulnerabile; "
-        "cambia solo il motore. Il sorgente e' in `/opt/lab/banca-app/banca.py` sul "
-        "bersaglio (ed e' incorporato in `lezioni/lezione-12/target.sh`).")
+        "cambia solo il motore. Il sorgente è in `/opt/lab/banca-app/banca.py` sul "
+        "bersaglio (ed è incorporato in `lezioni/lezione-12/target.sh`).")
 
     d.h1("Come funziona il lab")
     d.h2("target.sh (sul bersaglio)")
@@ -131,8 +173,8 @@ def manuale(d):
     d.h2("kali.sh (sulla Kali)")
     d.bullets(["Verifica che la Banca risponda e mostra la missione (payload SQLi)."])
 
-    d.h1("Vulnerabilita' della piattaforma (usate nel blocco)")
-    d.table(["Endpoint", "Vulnerabilita'", "Lezione"], [
+    d.h1("Vulnerabilità della piattaforma (usate nel blocco)")
+    d.table(["Endpoint", "Vulnerabilità", "Lezione"], [
         ["POST /login", "SQL injection (bypass) ", "12"],
         ["GET /cerca", "SQL injection (dump, UNION) + XSS riflesso", "12, 13, 14"],
         ["/bacheca", "XSS memorizzato", "14"],
@@ -164,7 +206,7 @@ def manuale(d):
 
     d.h1("Troubleshooting")
     d.table(["Sintomo", "Causa e rimedio"], [
-        [":8080 non risponde", "`systemctl status banca`; se la porta e' occupata dal "
+        [":8080 non risponde", "`systemctl status banca`; se la porta è occupata dal "
          "vecchio nginx, `docker rm -f banca` e rilancia `lab 12`"],
         ["il payload non entra", "attenzione allo spazio dopo `--`; nei form del browser "
          "va bene, con curl usare `-d \"...\"` mantenendo lo spazio"],
@@ -173,6 +215,6 @@ def manuale(d):
     ], widths=[2600, 6426])
 
     d.h1("Nota di sicurezza")
-    d.p("L'app e' volutamente insicura: va usata SOLO sul bersaglio del laboratorio "
+    d.p("L'app è volutamente insicura: va usata SOLO sul bersaglio del laboratorio "
         "isolato. Non esporla mai su reti reali. A fine corso: `systemctl disable --now "
         "banca`.")

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import comune
 NUM = 6
 SLUG = "bash-scripting-offensivo"
 TITOLO = "Bash scripting offensivo: il tuo primo scanner"
@@ -161,6 +162,48 @@ def dispensa(d):
         "La segmentazione della rete (VLAN) limita quanto lontano può arrivare uno "
         "scanner: lo vedremo nel blocco sulle difese di rete.",
     ])
+    comune.studio(
+        d,
+        approfondimenti=[
+            ("bash, sh e perché lo scripting conta", "bash è la shell più diffusa su Linux, ma non l'unica: sh (dash su Ubuntu) è più minimale e NON conosce gli array né /dev/tcp. Per questo uno script che usa queste funzioni deve girare con bash: lanciarlo con sh darà errori strani. Nello scripting contano molto i codici di uscita: 0 vuol dire riuscito, diverso da 0 fallito, ed è ciò che usano if e gli operatori && (esegui il secondo solo se il primo riesce) e || (solo se fallisce). Automatizzare non è solo comodità: è il modo in cui sono nati tutti gli strumenti di sicurezza. Capire come è fatto uno scanner dentro ti rende capace di modificarlo e di non dipendere da tool pronti che non controlli."),
+        ],
+        sintesi=[
+            'Uno script bash automatizza comandi ripetitivi: shebang, chmod +x, esecuzione.',
+            'I mattoni sono variabili, ciclo for, condizione if e i codici di uscita (0 = ok).',
+            "Un ping sweep sequenziale è lento; con & (background) e wait diventa velocissimo.",
+            "La funzione /dev/tcp di bash permette di verificare se una porta è aperta senza altri strumenti.",
+            "Capire come è fatto uno strumento vale più che usarne uno pronto senza saperlo.",
+        ],
+        glossario=[
+            ('Script', 'un file di comandi eseguibili in sequenza'),
+            ('Shebang', "la prima riga #!/usr/bin/env bash che indica l'interprete"),
+            ('Variabile', 'un contenitore per un valore (nome=valore, si usa con $nome)'),
+            ('Ciclo for', 'ripete dei comandi per ogni elemento di una lista'),
+            ("Codice di uscita", "0 se un comando riesce, diverso da 0 se fallisce"),
+            ('& e wait', 'avviare in parallelo (&) e aspettare la fine di tutti (wait)'),
+            ('/dev/tcp', 'funzione di bash per aprire una connessione TCP (test di porta)'),
+            ('Ping sweep', 'pingare tutti gli indirizzi di una rete per trovare gli host vivi'),
+        ],
+        errori=[
+            "Mettere spazi attorno all'= in una variabile (nome = valore): errore.",
+            'Lanciare uno script con sh invece di bash: /dev/tcp e gli array non funzionano.',
+            'Dimenticare wait dopo aver lanciato i ping in background: risultati incompleti.',
+            'Non gestire il timeout del ping (-W): lo scanner si impianta sugli host spenti.',
+        ],
+        domande=[
+            "Perché lo scanner parallelo è così più veloce di quello sequenziale?",
+            'Come rendi eseguibile uno script e come lo lanci?',
+            'A cosa servono & e wait in un ping sweep?',
+            "Come verifichi se una porta è aperta usando solo bash (/dev/tcp)?",
+            'Cosa stampa il codice di uscita di un comando e come lo usa un if?',
+        ],
+        collegamenti=[
+            'Lezione 4: le pipe e le redirezioni che usi dentro gli script.',
+            'Lezione 8-9: gli stessi concetti con gli strumenti professionali (nmap).',
+            'Lezione 9: uno scanner di porte scritto in Python.',
+        ],
+    )
+
 
     d.h2("Punteggio della Lezione 6")
     d.table(["Obiettivo", "Come", "Punti"], [

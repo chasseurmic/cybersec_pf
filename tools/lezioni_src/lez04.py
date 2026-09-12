@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import comune
 NUM = 4
 SLUG = "navigazione-redirezioni-pipe"
 TITOLO = "Navigazione avanzata, redirezioni e pipe"
@@ -155,6 +156,48 @@ def dispensa(d):
         "Picchi di richieste e valanghe di 404 sono i primi segni di una scansione.",
         "Le pipe trasformano un log illeggibile in una risposta in un secondo.",
     ])
+    comune.studio(
+        d,
+        approfondimenti=[
+            ('I tre canali: standard input, output ed errore', "Ogni comando ha tre canali. Lo standard input (stdin, canale 0) è ciò che arriva, di solito dalla tastiera. Lo standard output (stdout, canale 1) è il risultato normale. Lo standard error (stderr, canale 2) è dove finiscono gli errori, tenuti separati apposta. La pipe | collega lo stdout di un comando allo stdin del successivo. Le redirezioni dirottano un canale: > e >> agiscono su stdout, 2> agisce su stderr, e 2>/dev/null butta via gli errori senza sporcare il risultato. Capire questa distinzione spiega perché find /srv 2>/dev/null mostra solo i file trovati e nasconde la valanga di 'Permission denied': gli errori vanno sul canale 2, che tu stai scartando."),
+        ],
+        sintesi=[
+            "La pipe | passa l'output di un comando al comando successivo: una catena di montaggio.",
+            "Le redirezioni dirottano l'output: > sovrascrive, >> aggiunge, 2>/dev/null butta gli errori.",
+            'grep filtra, cut taglia campi, sort ordina, uniq -c conta, wc -l conta le righe.',
+            "La combo cut | sort | uniq -c | sort -rn | head smaschera chi compare più spesso in un log.",
+            "Gli stessi strumenti servono all'attaccante (setacciare il bottino) e al difensore (leggere i log).",
+        ],
+        glossario=[
+            ('Pipe (|)', "collega due comandi passando il testo dall'uno all'altro"),
+            ('stdout / stderr', "il canale dell'output normale (1) e quello degli errori (2)"),
+            ('Redirezione', "dirottare l'output: > file, >> file, 2> file"),
+            ('/dev/null', "il 'cestino' del sistema: ciò che ci mandi sparisce"),
+            ('grep', 'filtra le righe che contengono un testo (-r ricorsivo, -l solo i nomi)'),
+            ('cut', 'estrae colonne/campi (-d separatore, -f numero campo)'),
+            ('sort / uniq', 'ordina le righe / rimuove o conta i doppioni (uniq dopo sort)'),
+            ('Log', 'registro degli eventi di un sistema o di un servizio'),
+        ],
+        errori=[
+            'Usare uniq senza sort prima: conta solo i doppioni consecutivi.',
+            'Confondere > (sovrascrive, cancella!) con >> (aggiunge in fondo).',
+            "Dimenticare le virgolette quando il separatore è uno spazio: cut -d' ' -f1.",
+            'Non filtrare gli errori con 2>/dev/null e perdere il risultato nel rumore.',
+        ],
+        domande=[
+            "Come conti quante righe di un log contengono '404'?",
+            "Come salvi su file l'elenco ordinato e senza doppioni degli IP di un log?",
+            "Qual è la differenza tra > e >>? Cosa rischi a sbagliarli?",
+            "Perché uniq va sempre usato dopo sort?",
+            "Come troveresti, tra mille file, l'unico che contiene la parola 'password'?",
+        ],
+        collegamenti=[
+            'Lezione 3: i comandi di base (ls, cat, find) su cui si costruiscono le pipe.',
+            'Lezione 36: leggere i log di sicurezza usando esattamente queste pipe.',
+            'Lezione 6: automatizzare queste catene dentro uno script.',
+        ],
+    )
+
 
     d.h2("Punteggio della Lezione 4")
     d.table(["Obiettivo", "Come", "Punti"], [

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import comune
 NUM = 34
 SLUG = "analisi-dinamica-ioc"
 TITOLO = "Analisi dinamica e indicatori di compromissione"
@@ -12,16 +13,16 @@ def dispensa(d):
         "compromissione (IOC).",
         "**Al termine sai:** far girare un campione in sandbox e osservarne connessioni e "
         "file con strace, ss e ls, individuando il C2 e gli artefatti su disco.",
-        "**Flag in palio:** 2 flag (70 punti). Sandbox isolata; il campione e' innocuo.",
+        "**Flag in palio:** 2 flag (70 punti). Sandbox isolata; il campione è innocuo.",
     ])
 
     d.h1("Parte 1 · Guardarlo agire, al sicuro (teoria, 25 min)")
     d.h2("Il caso reale")
     d.p("L'analisi statica (lezione scorsa) legge il file senza eseguirlo. Ma alcune cose "
         "si capiscono solo vedendolo in azione: a chi si collega, quali file crea, come "
-        "cerca di sopravvivere ai riavvii. Questa e' l'analisi dinamica, e si fa in una "
-        "sandbox: una macchina isolata e usa-e-getta, senza internet, dove il malware puo' "
-        "sfogarsi senza fare danni veri. Il campione di oggi e' finto e innocuo, ma si "
+        "cerca di sopravvivere ai riavvii. Questa è l'analisi dinamica, e si fa in una "
+        "sandbox: una macchina isolata e usa-e-getta, senza internet, dove il malware può "
+        "sfogarsi senza fare danni veri. Il campione di oggi è finto e innocuo, ma si "
         "comporta come uno vero: lascia un file e chiama un server C2.")
 
     d.h2("Cosa si osserva e con quali strumenti")
@@ -63,12 +64,51 @@ def dispensa(d):
     d.h1("Parte 3 · Ribaltamento difensivo (15 min)")
     d.box("verde", "Dagli IOC alla difesa (blue team)", items=[
         "Bloccare l'IP/dominio del C2 su firewall e proxy: il malware resta 'muto'.",
-        "Cercare gli artefatti (i file lasciati) su tutti i PC: chi ce l'ha e' infetto.",
+        "Cercare gli artefatti (i file lasciati) su tutti i PC: chi ce l'ha è infetto.",
         "Regole di rilevamento (SIEM/EDR) basate su questi IOC per accorgersi subito.",
         "Isolare la macchina compromessa: si ricollega all'incident response (Blocco 9).",
     ])
     d.p("Osservare bene un solo campione produce indicatori che proteggono un'intera rete: "
-        "e' il ponte verso il lavoro del difensore, il tema del prossimo blocco.")
+        "è il ponte verso il lavoro del difensore, il tema del prossimo blocco.")
+    comune.studio(
+        d,
+        approfondimenti=[
+            ('IOC e IOA: gli indizi di una compromissione', "Osservando un campione in esecuzione si raccolgono due tipi di indizi. Gli IOC (Indicator Of Compromise) sono tracce concrete: l'hash di un file, un IP o un dominio contattato, il nome di un file lasciato, una chiave di persistenza. Sono ottimi per cercare la stessa minaccia su altri computer e per creare regole di blocco. Gli IOA (Indicator Of Attack) descrivono invece il comportamento, la tattica: 'un processo office che lancia PowerShell che scarica un file'. Gli IOC cambiano facilmente (basta che l'attaccante cambi IP), gli IOA colgono lo schema e reggono meglio nel tempo. Un buon difensore usa entrambi: gli IOC per il blocco immediato, gli IOA per riconoscere anche le varianti mai viste prima."),
+        ],
+        sintesi=[
+            "L'analisi dinamica osserva il comportamento del programma mentre gira, in una sandbox isolata.",
+            'Si guardano connessioni (strace, ss), file creati (ls) e processi (ps).',
+            "Da qui si ricavano gli IOC concreti: l'IP/porta del C2, gli artefatti su disco.",
+            'Statica e dinamica insieme danno il quadro completo: cosa POTREBBE fare e cosa FA.',
+            'Difesa: bloccare il C2, cercare gli artefatti su tutti i PC, isolare le macchine compromesse.',
+        ],
+        glossario=[
+            ('Analisi dinamica', 'osservare un programma in esecuzione, in sandbox'),
+            ('strace', 'mostra le chiamate di sistema di un processo (incluse le connessioni)'),
+            ('ss / lsof', 'mostrano le connessioni di rete aperte'),
+            ('Artefatto', 'traccia lasciata dal malware (file, chiave, processo)'),
+            ('C2', 'server di comando e controllo che il malware contatta'),
+            ('IOC', 'indicatori concreti per riconoscere la minaccia'),
+        ],
+        errori=[
+            'Eseguire un campione fuori da una sandbox isolata.',
+            'Guardare solo i file e non le connessioni di rete (o viceversa).',
+            "Non annotare gli IOC: sono ciò che poi protegge l'intera rete.",
+        ],
+        domande=[
+            "Cosa aggiunge l'analisi dinamica rispetto alla statica?",
+            "Come scopri con chi 'parla' un campione (il C2)?",
+            'Quali artefatti cerchi e come?',
+            "Perché statica e dinamica vanno usate insieme?",
+            "Come si passa dagli IOC alla difesa dell'intera rete?",
+        ],
+        collegamenti=[
+            "Lezione 32: l'analisi statica, il primo passo.",
+            'Lezione 27 e 36: usare gli IOC su firewall e sistemi di rilevamento.',
+            'Lezione 37: isolare e bonificare una macchina compromessa.',
+        ],
+    )
+
 
     d.h2("Punteggio della Lezione 34")
     d.table(["Obiettivo", "Come", "Punti"], [
@@ -105,7 +145,7 @@ def manuale(d):
     ], widths=[700, 5926, 2400])
     d.h1("Troubleshooting")
     d.table(["Sintomo", "Causa e rimedio"], [
-        ["strace non c'e'", "installarlo (su Kali di norma presente); in alternativa usare "
+        ["strace non c'è", "installarlo (su Kali di norma presente); in alternativa usare "
          "`ss -tnp | grep 4444` mentre il campione gira"],
         ["ss non mostra la connessione", "il tentativo dura 1s: rilanciare e guardare "
          "subito, o usare strace che li mostra tutti"],
@@ -113,7 +153,7 @@ def manuale(d):
          "Ctrl+C per fermarlo prima"],
     ], widths=[3000, 6026])
     d.h1("Nota sul blocco (Lezione 33 saltata)")
-    d.p("Su indicazione del docente, la Lezione 33 (ransomware didattico) non e' stata "
+    d.p("Su indicazione del docente, la Lezione 33 (ransomware didattico) non è stata "
         "sviluppata. Il Blocco 8 resta comunque completo nei concetti: tipologie e ciclo "
         "di vita (L31), analisi statica (L32) e analisi dinamica con IOC (L34). Se in "
         "futuro si volesse reintrodurre una simulazione di ransomware, andrebbe fatta solo "

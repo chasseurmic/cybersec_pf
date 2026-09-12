@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import comune
 NUM = 1
 SLUG = "triade-cia-primo-accesso"
 TITOLO = "Triade CIA e primo accesso"
@@ -38,6 +39,24 @@ def dispensa(d):
     ], widths=[2400, 3626, 3000])
     d.p("Tenere a mente la triade aiuta a ragionare: davanti a qualunque scenario, "
         "chiediti quale pilastro è a rischio. È la bussola di tutto il corso.")
+    d.p("Un esempio concreto per capire come i tre pilastri lavorino insieme. Immagina il "
+        "registro elettronico della scuola. La confidenzialità fa sì che solo i docenti "
+        "vedano i voti (non i compagni di classe). L'integrità garantisce che un voto, una "
+        "volta messo, non possa essere cambiato di nascosto da qualcuno. La disponibilità "
+        "assicura che il giorno degli scrutini il registro sia acceso e raggiungibile. Se "
+        "cade anche uno solo dei tre, il sistema non è più affidabile: voti che trapelano, "
+        "voti falsificati, oppure un registro irraggiungibile nel momento peggiore.")
+
+    d.box("blu", "Approfondimento · oltre la triade", intro=(
+        "La triade CIA è la base, ma nel lavoro reale si aggiungono spesso altri tre "
+        "concetti, che incontrerai più avanti nel corso:"), items=[
+        "**Autenticazione:** dimostrare di essere chi si dice di essere (la password, il "
+        "secondo fattore). La vedremo con login e cookie.",
+        "**Autorizzazione:** una volta entrati, cosa si è autorizzati a fare (i permessi). "
+        "La vedremo con il filesystem e con sudo.",
+        "**Non ripudio:** non poter negare di aver fatto un'azione (le firme digitali, i "
+        "log). Lo vedremo con la crittografia e con i log.",
+    ])
 
     d.h2("Perché studiamo il punto di vista dell'attaccante")
     d.p("Per difendere una casa devi sapere come entra un ladro: quali finestre lascia "
@@ -46,6 +65,13 @@ def dispensa(d):
         "danni, ma per capire dove sono i punti deboli e chiuderli (il 'blue team', la "
         "difesa). Alla fine di ogni lezione c'è sempre un 'ribaltamento difensivo': la "
         "stessa cosa vista dal lato di chi protegge.")
+    d.p("Un attacco reale non è un colpo di fortuna, ma un percorso con delle tappe. Prima "
+        "l'attaccante raccoglie informazioni (ricognizione), poi cerca un modo per entrare, "
+        "quindi allarga il controllo e infine compie il danno o ruba i dati. Il corso segue "
+        "proprio questo filo: partiamo dalle basi di Linux e della rete, poi ricognizione, "
+        "attacchi alle applicazioni web, password, rete, inganni (phishing), malware e "
+        "infine difesa. Ogni blocco è una tappa di questo percorso, vista da entrambi i "
+        "lati.")
 
     d.box("rosso", "Regola d'oro (etica e legge)", items=[
         "Tutto quello che impari si usa SOLO dentro il laboratorio isolato del corso.",
@@ -147,6 +173,49 @@ def dispensa(d):
         "Chi difende parte sempre dalla domanda: quale pilastro (C, I, A) sto proteggendo, "
         "e cosa succederebbe se cadesse?",
     ])
+
+    comune.studio(
+        d,
+        sintesi=[
+            "La sicurezza protegge tre cose: Confidenzialità, Integrità, Disponibilità "
+            "(triade CIA). Ogni attacco colpisce almeno uno di questi pilastri.",
+            "Studiamo l'attacco per imparare a difendere: red team (attacco) e blue team "
+            "(difesa) usano gli stessi strumenti, cambia l'intenzione (e il permesso).",
+            "Tutto va fatto SOLO nel laboratorio isolato: fuori è reato (art. 615-ter c.p.).",
+            "Il terminale serve a orientarsi: `whoami`, `id`, `ip a`, `pwd`, `ls`, `cat`.",
+            "Nascondere non è proteggere: un file `.nascosto` si vede con `ls -a`.",
+        ],
+        glossario=[
+            ("Terminale (shell)", "il programma dove si digitano i comandi testuali"),
+            ("Comando", "un'istruzione data al computer scrivendola nel terminale"),
+            ("Flag", "una stringa `FLAG{...}` che dimostra un obiettivo raggiunto; vale punti"),
+            ("Triade CIA", "Confidenzialità, Integrità, Disponibilità: i tre pilastri"),
+            ("Macchina virtuale (VM)", "un computer simulato che gira dentro il tuo PC"),
+            ("Kali", "la VM dell'attaccante, con gli strumenti di sicurezza"),
+            ("Bersaglio (target)", "la VM vittima su cui ci si esercita"),
+            ("IP", "l'indirizzo numerico di un computer in rete (es. 10.10.10.20)"),
+            ("Red team / Blue team", "chi attacca (per test) / chi difende"),
+        ],
+        errori=[
+            "Usare queste tecniche fuori dal laboratorio: è un reato, sempre.",
+            "Pensare che un file nascosto o rinominato sia 'protetto'.",
+            "Confondere `è` (verbo) con la triade: la 'A' è Availability, cioè disponibilità.",
+            "Scrivere i comandi con la maiuscola: il terminale distingue maiuscole e "
+            "minuscole (`Ls` non è `ls`).",
+        ],
+        domande=[
+            "Cosa significano le tre lettere di CIA? Fai un esempio di violazione per ognuna.",
+            "Perché in un corso di difesa si studiano le tecniche di attacco?",
+            "Qual è la differenza tra nascondere un file e proteggerlo davvero?",
+            "Con quale comando vedi il tuo indirizzo IP? E i file nascosti?",
+            "Perché usare queste competenze su sistemi altrui è pericoloso oltre che sbagliato?",
+        ],
+        collegamenti=[
+            "Lezione 2: come è fatto il laboratorio e come si usa il comando `lab`.",
+            "Lezione 3: permessi dei file, il vero modo di proteggere (la 'C' della triade).",
+            "Blocco 5 (crittografia): come si ottiene davvero la confidenzialità.",
+        ],
+    )
 
     d.h2("Punteggio della Lezione 1")
     d.table(["Obiettivo", "Come", "Punti"], [

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import comune
 NUM = 14
 SLUG = "xss-reflected-stored"
 TITOLO = "XSS: reflected e stored"
@@ -7,11 +8,11 @@ TITOLO = "XSS: reflected e stored"
 def dispensa(d):
     d.box("blu", "In breve", [
         "**Durata:** 2 ore.  Struttura: 25 min teoria · 80 min pratica · 15 min difesa.",
-        "**Obiettivo:** capire il Cross-Site Scripting (XSS), la vulnerabilita' che "
+        "**Obiettivo:** capire il Cross-Site Scripting (XSS), la vulnerabilità che "
         "permette di far eseguire il proprio JavaScript nel browser di altri utenti, e "
         "distinguere la versione riflessa da quella memorizzata.",
         "**Al termine sai:** iniettare uno script in un campo non filtrato, capire la "
-        "differenza tra XSS riflesso e memorizzato, e perche' il secondo e' piu' "
+        "differenza tra XSS riflesso e memorizzato, e perché il secondo è più "
         "pericoloso.",
         "**Flag in palio:** 2 flag (70 punti). Prerequisito: Banca (Lezione 12).",
     ])
@@ -19,19 +20,19 @@ def dispensa(d):
     d.h1("Parte 1 · Quando il sito esegue le tue parole (teoria, 25 min)")
     d.h2("Il caso reale")
     d.p("Il furto di sessioni sui social, i commenti che rubano i dati di chi li legge, i "
-        "finti moduli che compaiono dentro un sito vero: dietro c'e' quasi sempre l'XSS. "
+        "finti moduli che compaiono dentro un sito vero: dietro c'è quasi sempre l'XSS. "
         "Succede quando un sito prende quello che scrivi e lo rimette nella pagina senza "
         "ripulirlo. Il browser non distingue il testo scritto dallo sviluppatore da "
         "quello scritto da te: se ci metti un `<script>`, lo esegue.")
 
     d.h2("Riflesso contro memorizzato")
     d.table(["Tipo", "Come funziona", "Chi colpisce"], [
-        ["Riflesso", "lo script e' nella URL/richiesta e torna subito nella risposta",
+        ["Riflesso", "lo script è nella URL/richiesta e torna subito nella risposta",
          "chi apre il link che gli mandi"],
         ["Memorizzato", "lo script viene salvato dal sito (un commento, un messaggio)",
          "chiunque visiti la pagina, in automatico"],
     ], widths=[1600, 4826, 2600])
-    d.p("Il memorizzato e' piu' pericoloso: lo carichi una volta e colpisce tutti, "
+    d.p("Il memorizzato è più pericoloso: lo carichi una volta e colpisce tutti, "
         "compreso l'amministratore quando apre la bacheca.")
 
     d.h2("Un payload semplice")
@@ -52,7 +53,7 @@ def dispensa(d):
         "per leggere la flag (nel sorgente della risposta):",
         "curl \"http://10.10.10.20:8080/cerca?conto=<script>alert(1)</script>\" | grep FLAG",
     ])
-    d.p("In Firefox vedi il pop-up: e' la prova che il tuo codice e' stato eseguito.")
+    d.p("In Firefox vedi il pop-up: è la prova che il tuo codice è stato eseguito.")
 
     d.h2("Passo 2 · XSS memorizzato nella bacheca (+40)")
     d.p("La bacheca salva i messaggi e li mostra a tutti, senza ripulirli. Pubblica uno "
@@ -64,7 +65,7 @@ def dispensa(d):
         "leggi la flag:",
         "curl \"http://10.10.10.20:8080/bacheca\" | grep FLAG",
     ])
-    d.box("rosso", "Perche' e' grave", items=[
+    d.box("rosso", "Perché è grave", items=[
         "Un vero payload non fa un pop-up: ruba il cookie di sessione e lo manda "
         "all'attaccante (`document.cookie`), oppure compie azioni al posto tuo.",
         "Con l'XSS memorizzato basta che l'admin apra la pagina per farsi rubare la sessione.",
@@ -73,14 +74,55 @@ def dispensa(d):
     d.h1("Parte 3 · Ribaltamento difensivo (15 min)")
     d.box("verde", "Come si ferma l'XSS", items=[
         "Escape dell'output: ogni dato dell'utente va 'neutralizzato' prima di finire in "
-        "pagina (i `<` diventano `&lt;`), cosi' e' testo e non codice.",
-        "Validare l'input, ma la difesa vera e' l'escape in uscita, sempre.",
-        "Content Security Policy (CSP): dice al browser quali script puo' eseguire.",
-        "Cookie di sessione con HttpOnly: il JavaScript non li puo' leggere, cosi' un XSS "
+        "pagina (i `<` diventano `&lt;`), così è testo e non codice.",
+        "Validare l'input, ma la difesa vera è l'escape in uscita, sempre.",
+        "Content Security Policy (CSP): dice al browser quali script può eseguire.",
+        "Cookie di sessione con HttpOnly: il JavaScript non li può leggere, così un XSS "
         "non li ruba.",
     ])
     d.p("La stessa bacheca, fatta bene, mostrerebbe `<script>...</script>` come testo "
         "innocuo, non come codice.")
+    comune.studio(
+        d,
+        approfondimenti=[
+            ("Le tre facce dell'XSS e la regola dell'origine", "L'XSS ha tre forme. Riflessa: il payload è nella richiesta e torna subito nella risposta (colpisce chi apre un link preparato). Memorizzata: il payload viene salvato dal sito (un commento, un messaggio) e servito a tutti i visitatori. DOM-based: il problema è nel JavaScript della pagina che manipola l'input senza ripulirlo. Perché un XSS è così potente? Perché il codice iniettato gira con l'origine del sito vero: il browser protegge i siti l'uno dall'altro con la 'same-origin policy', ma uno script iniettato NEL sito è considerato parte del sito e può leggere i suoi cookie, modificare la pagina, inviare richieste come te. Ecco perché ruba sessioni e compie azioni al posto della vittima."),
+        ],
+        sintesi=[
+            "L'XSS avviene quando un sito mostra l'input dell'utente senza ripulirlo: diventa codice eseguito dal browser.",
+            'Riflesso: lo script torna subito nella risposta (colpisce chi apre il link). Memorizzato: viene salvato (colpisce tutti).',
+            "Il memorizzato è più grave: caricato una volta, colpisce ogni visitatore, admin compreso.",
+            'Un XSS reale ruba il cookie di sessione o compie azioni al posto della vittima.',
+            "Difesa: escape dell'output, Content Security Policy, cookie HttpOnly.",
+        ],
+        glossario=[
+            ('XSS', 'Cross-Site Scripting: esecuzione di codice altrui nel browser della vittima'),
+            ('XSS riflesso', "lo script è nella richiesta e torna nella risposta immediata"),
+            ('XSS memorizzato', 'lo script viene salvato dal sito e servito a tutti'),
+            ('Payload', 'il codice iniettato (es. <script>alert(1)</script>)'),
+            ("Escape dell'output", "trasformare < in &lt; così il testo non diventa codice"),
+            ('HttpOnly', 'flag del cookie che lo rende illeggibile dal JavaScript'),
+            ('CSP', 'Content Security Policy: dice al browser quali script eseguire'),
+        ],
+        errori=[
+            "Mostrare l'input dell'utente senza escape: è la causa dell'XSS.",
+            "Difendersi solo filtrando l'input: la difesa vera è l'escape in uscita.",
+            'Tenere i cookie di sessione senza HttpOnly: un XSS li ruba.',
+            "Sottovalutare il memorizzato: basta che l'admin apra la pagina.",
+        ],
+        domande=[
+            "Qual è la differenza tra XSS riflesso e memorizzato? Quale è più grave?",
+            "Cosa fa in pratica un payload XSS più pericoloso di un alert?",
+            "Perché l'escape dell'output ferma l'XSS?",
+            'A cosa serve il flag HttpOnly sui cookie?',
+            "Perché fidarsi dei dati del client è all'origine anche dell'XSS?",
+        ],
+        collegamenti=[
+            'Lezione 11: le richieste in cui inietti il payload.',
+            "Lezione 15: il furto del cookie di sessione, spesso obiettivo dell'XSS.",
+            'Lezione 29: pagine civetta e inganni, cugini del XSS memorizzato.',
+        ],
+    )
+
 
     d.h2("Punteggio della Lezione 14")
     d.table(["Obiettivo", "Come", "Punti"], [
@@ -99,13 +141,13 @@ def manuale(d):
     d.h1("Obiettivi didattici")
     d.bullets([
         "Capire l'XSS come esecuzione di codice altrui nel browser della vittima.",
-        "Distinguere riflesso e memorizzato e la diversa gravita'.",
+        "Distinguere riflesso e memorizzato e la diversa gravità.",
         "Collegare alla difesa: escape in output, CSP, cookie HttpOnly.",
     ])
     d.h1("Come funziona il lab")
     d.bullets([
         "target.sh: verifica la Banca (altrimenti chiede `lab 12`), riavvia il servizio e "
-        "azzera la bacheca (un solo messaggio di benvenuto), cosi' la flag del "
+        "azzera la bacheca (un solo messaggio di benvenuto), così la flag del "
         "memorizzato compare solo dopo l'iniezione dello studente.",
         "L'app premia il payload: quando la ricerca riflette uno script, o la bacheca ne "
         "salva uno, aggiunge la flag in un commento HTML della risposta (oltre a "
@@ -129,6 +171,6 @@ def manuale(d):
         ["voglio ripulire la bacheca", "rilanciare `lab 14` (azzera i messaggi)"],
     ], widths=[3000, 6026])
     d.h1("Nota didattica")
-    d.p("Il portale della Lezione 11 (:8090) escapa correttamente l'input: e' l'esempio "
-        "'giusto'. La Banca (:8080) no: e' l'esempio 'sbagliato' da bucare. Il confronto "
+    d.p("Il portale della Lezione 11 (:8090) escapa correttamente l'input: è l'esempio "
+        "'giusto'. La Banca (:8080) no: è l'esempio 'sbagliato' da bucare. Il confronto "
         "aiuta a far vedere la differenza tra codice sicuro e insicuro.")

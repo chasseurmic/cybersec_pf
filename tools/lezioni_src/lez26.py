@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import comune
 NUM = 26
 SLUG = "dns-spoofing"
 TITOLO = "DNS spoofing e attacchi in rete locale"
@@ -8,24 +9,24 @@ def dispensa(d):
     d.box("blu", "In breve", [
         "**Durata:** 2 ore.  Struttura: 25 min teoria · 80 min pratica · 15 min difesa.",
         "**Obiettivo:** capire il DNS (la rubrica di internet che traduce i nomi in "
-        "indirizzi) e come, controllandolo, si puo' mandare una vittima su un sito "
+        "indirizzi) e come, controllandolo, si può mandare una vittima su un sito "
         "civetta per rubarle le credenziali.",
         "**Al termine sai:** far funzionare un DNS 'canaglia', dirottare una vittima verso "
-        "un tuo sito e capire perche' fidarsi del DNS sbagliato e' pericoloso.",
+        "un tuo sito e capire perché fidarsi del DNS sbagliato è pericoloso.",
         "**Flag in palio:** 2 flag (70 punti).",
     ])
 
     d.h1("Parte 1 · La rubrica di internet (teoria, 25 min)")
     d.h2("Il caso reale")
     d.p("Quando scrivi il nome di un sito, il computer chiede al DNS 'a quale indirizzo IP "
-        "corrisponde?' e poi ci si collega. E' come chiedere un numero all'elenco "
-        "telefonico. Ma se qualcuno ti da' il numero sbagliato, chiami la persona "
-        "sbagliata senza accorgertene. Il DNS spoofing e' questo: rispondere con un IP "
+        "corrisponde?' e poi ci si collega. È come chiedere un numero all'elenco "
+        "telefonico. Ma se qualcuno ti dà il numero sbagliato, chiami la persona "
+        "sbagliata senza accorgertene. Il DNS spoofing è questo: rispondere con un IP "
         "falso, per mandare la vittima su un sito controllato dall'attaccante, magari "
         "identico all'originale, dove digitera' le sue credenziali.")
 
-    d.h2("Perche' funziona")
-    d.p("Il computer si fida del DNS che gli e' stato indicato (di solito dato dal router "
+    d.h2("Perché funziona")
+    d.p("Il computer si fida del DNS che gli è stato indicato (di solito dato dal router "
         "via DHCP). Se un attaccante controlla quel DNS, o si mette in mezzo (ARP "
         "spoofing della lezione scorsa) e risponde lui, decide dove vai. E se il sito "
         "civetta assomiglia a quello vero, la vittima non sospetta nulla.")
@@ -56,21 +57,60 @@ def dispensa(d):
     d.code(["lab26-verifica <la-password-catturata>"])
 
     d.box("blu", "Come si concatena col resto", items=[
-        "Se non controlli gia' il DNS, ti ci metti in mezzo con l'ARP spoofing (Lezione 25).",
-        "Il sito civetta puo' essere una copia perfetta del sito vero (Lezione 29, phishing).",
+        "Se non controlli già il DNS, ti ci metti in mezzo con l'ARP spoofing (Lezione 25).",
+        "Il sito civetta può essere una copia perfetta del sito vero (Lezione 29, phishing).",
         "Con HTTPS la vittima vedrebbe un avviso sul certificato (Lezione 22): un motivo "
-        "in piu' per non ignorarlo mai.",
+        "in più per non ignorarlo mai.",
     ])
 
     d.h1("Parte 3 · Ribaltamento difensivo (15 min)")
     d.box("verde", "Difendersi dal DNS spoofing", items=[
-        "Usare DNS fidati e, dove possibile, DNS cifrato (DoH/DoT): piu' difficile da "
+        "Usare DNS fidati e, dove possibile, DNS cifrato (DoH/DoT): più difficile da "
         "manomettere.",
         "HTTPS ovunque: il sito civetta senza un certificato valido fa scattare l'avviso.",
         "Su reti gestite: DHCP snooping e protezioni contro i server DHCP/DNS abusivi.",
         "Diffidare degli avvisi di sicurezza del browser: non sono un fastidio, sono un "
         "allarme.",
     ])
+    comune.studio(
+        d,
+        approfondimenti=[
+            ('Come funziona davvero il DNS (e dove si rompe)', "Il DNS è una gerarchia. Quando chiedi un nome, si parte dai server radice, che indicano i server del dominio di primo livello (.it, .com), che a loro volta indicano i server autoritativi del dominio specifico, che danno la risposta finale. Per non rifare tutto ogni volta, le risposte vengono messe in cache per un tempo detto TTL. Ogni punto di questa catena, e ogni cache lungo la strada, è un possibile bersaglio: se un attaccante riesce a inserire una risposta falsa (o controlla il DNS che usi), ti manda dove vuole lui. La difesa moderna è DNSSEC, che firma le risposte DNS in modo che non si possano falsificare, e il DNS cifrato (DoH/DoT), che impedisce di manometterle o spiarle lungo il percorso."),
+        ],
+        sintesi=[
+            'Il DNS traduce i nomi in indirizzi IP: se qualcuno risponde con un IP falso, ti manda dove vuole lui.',
+            "Controllando il DNS (o mettendosi in mezzo), l'attaccante dirotta la vittima su un sito civetta.",
+            "Un DNS canaglia risponde a ogni nome con l'IP dell'attaccante; il sito civetta cattura le credenziali.",
+            'Con HTTPS valido la vittima vedrebbe un avviso sul certificato: un motivo per non ignorarlo mai.',
+            'Difesa: DNS fidati e cifrati (DoH/DoT), HTTPS ovunque, protezioni contro DHCP/DNS abusivi.',
+        ],
+        glossario=[
+            ('DNS', 'il servizio che traduce i nomi (banca.local) in indirizzi IP'),
+            ('Risoluzione dei nomi', "l'operazione di trovare l'IP di un nome"),
+            ('DNS spoofing', 'rispondere con un IP falso per dirottare la vittima'),
+            ('DNS canaglia', "un server DNS controllato dall'attaccante"),
+            ('Sito civetta', 'una copia del sito vero, fatta per rubare le credenziali'),
+            ('DoH / DoT', "DNS cifrato (over HTTPS / over TLS), più difficile da manomettere"),
+        ],
+        errori=[
+            'Usare DNS non fidati o forniti da chiunque sulla rete.',
+            'Ignorare gli avvisi del browser (dominio o certificato sospetti).',
+            "Non usare HTTPS: senza, il sito civetta è indistinguibile a occhio.",
+        ],
+        domande=[
+            "Perché controllare il DNS permette di dirottare una vittima?",
+            'Cosa fa un DNS canaglia?',
+            'Come si combina il DNS spoofing con un sito civetta?',
+            "Perché HTTPS valido aiuta a smascherare l'inganno?",
+            'Quali difese riducono il rischio di DNS spoofing?',
+        ],
+        collegamenti=[
+            "Lezione 25: l'ARP spoofing per intercettare le richieste DNS.",
+            'Lezione 29: il sito civetta approfondito (phishing).',
+            "Lezione 22: certificati e avvisi, l'ancora di salvezza.",
+        ],
+    )
+
 
     d.h2("Punteggio della Lezione 26")
     d.table(["Obiettivo", "Come", "Punti"], [
@@ -98,7 +138,7 @@ def manuale(d):
         "`aggiornamenti.banca.local` usando il DNS 10.10.10.5 (la Kali) e invia in POST "
         "le credenziali all'IP ottenuto.",
         "kali.sh installa `dnsspoof.py` (server DNS che risponde a tutto con un IP fisso, "
-        "porta 53) e `fakeweb.py` (sito civetta che stampa cio' che riceve), piu' "
+        "porta 53) e `fakeweb.py` (sito civetta che stampa ciò che riceve), più "
         "`lab26-verifica`.",
         "Catena verificata: DNS canaglia -> la vittima risolve alla Kali -> invia le "
         "credenziali al sito civetta, che mostra la flag.",
@@ -117,12 +157,12 @@ def manuale(d):
          "`sudo systemctl stop systemd-resolved` (sulla Kali), oppure usare un'altra porta"],
         ["il sito civetta non riceve nulla", "verificare che dnsspoof giri e che il client "
          "del bersaglio sia attivo (`systemctl status lab26-client`)"],
-        ["il MITM del DNS su altra rete", "qui la vittima punta gia' alla Kali come DNS; "
+        ["il MITM del DNS su altra rete", "qui la vittima punta già alla Kali come DNS; "
          "per il caso reale servirebbe l'ARP spoofing della Lezione 25"],
     ], widths=[3000, 6026])
     d.h1("Nota di progetto")
-    d.p("Il DNS canaglia e il sito civetta sono in sola stdlib e la catena e' stata "
+    d.p("Il DNS canaglia e il sito civetta sono in sola stdlib e la catena è stata "
         "provata: la vittima punta direttamente alla Kali come DNS (scenario 'rete con "
         "attaccante che controlla il DNS/DHCP'). Il collegamento con l'ARP spoofing (per "
-        "intercettare il DNS di una vittima che usa un altro server) e' spiegato nel "
-        "testo; l'esecuzione combinata e' da provare su x86 come la Lezione 25.")
+        "intercettare il DNS di una vittima che usa un altro server) è spiegato nel "
+        "testo; l'esecuzione combinata è da provare su x86 come la Lezione 25.")

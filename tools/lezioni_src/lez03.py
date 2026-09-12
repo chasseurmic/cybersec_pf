@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import comune
 NUM = 3
 SLUG = "filesystem-e-permessi"
 TITOLO = "Filesystem e permessi: la caccia al tesoro"
@@ -179,6 +180,48 @@ def dispensa(d):
     ])
     d.p("Oggi hai visto la lezione più importante di tutte: spesso non serve bucare "
         "niente, basta guardare bene. La difesa è ordine e disciplina sui permessi.")
+    comune.studio(
+        d,
+        approfondimenti=[
+            ('I permessi in dettaglio: dalle lettere ai numeri', "Ogni terzina di permessi (utente, gruppo, altri) è in realta' un numero da 0 a 7, somma di r=4, w=2, x=1. Così rwx=7, rw-=6, r-x=5, r--=4. Tre terzine diventano tre cifre: 644 vuol dire proprietario rw- (6), gruppo r-- (4), altri r-- (4). Attenzione alla x sulle cartelle: lì non significa 'eseguire' ma 'attraversare', cioè poter entrare nella cartella. Per questo una cartella tipicamente è 755: tutti possono entrarci ed elencarla, ma solo il proprietario può crearci dentro. Chi assegna i permessi ragiona sempre da destra a sinistra: cosa serve davvero ad 'altri'? Quasi mai la scrittura, spesso nemmeno la lettura."),
+        ],
+        sintesi=[
+            'In Linux tutto parte dalla radice /; le cartelle chiave sono /home, /etc, /var, /srv, /root, /tmp.',
+            'I percorsi sono assoluti (da /) o relativi (da dove sei: . qui, .. sopra, ~ casa).',
+            'I permessi hanno tre terzine (utente, gruppo, altri) con r=4, w=2, x=1: 644, 600, 755.',
+            "La vulnerabilità più comune non è un exploit ma un permesso sbagliato: un segreto leggibile da 'altri'.",
+            "Nascondere non è proteggere: i file col punto si vedono con ls -a.",
+        ],
+        glossario=[
+            ('Filesystem', "l'insieme organizzato di cartelle e file del sistema"),
+            ('Percorso assoluto', 'parte dalla radice, es. /srv/dati; vale sempre'),
+            ('Percorso relativo', 'parte dalla cartella corrente (pwd)'),
+            ('Permessi rwx', 'lettura (r), scrittura (w), esecuzione/attraversamento (x)'),
+            ('Proprietario / gruppo', "l'utente e il gruppo a cui appartiene un file"),
+            ('chmod', 'cambia i permessi (es. chmod 600 file)'),
+            ('SSH', 'collegamento a un terminale su una macchina remota'),
+            ('Minimo privilegio', "dare solo i permessi indispensabili, niente di più"),
+        ],
+        errori=[
+            "Lasciare un segreto a 644: la terzina 'altri' con la r lo rende leggibile a chiunque.",
+            "Confondere i numeri: 600 non è 'poco', è 'solo il proprietario'.",
+            "Dimenticare 2>/dev/null con find e affogare tra i 'Permission denied'.",
+            'Credere che rinominare o nascondere un file lo protegga.',
+        ],
+        domande=[
+            "Cosa vuol dire chmod 640 in termini di chi può fare cosa?",
+            'Come cerchi tutti i file che contengono la parola FLAG sotto /srv?',
+            "Perché stipendi.csv (600, root) è 'un muro' e password_backup.txt (644) no?",
+            "Qual è la differenza tra percorso assoluto e relativo?",
+            "Cos'è il principio del minimo privilegio e perché conta?",
+        ],
+        collegamenti=[
+            'Lezione 4: setacciare file e log con pipe e redirezioni.',
+            "Lezione 5: utenti, gruppi e la regola sudo (chi può diventare root).",
+            "Lezione 35: hardening, cioè chiudere i permessi di troppo in modo sistematico.",
+        ],
+    )
+
 
     d.h2("Punteggio della Lezione 3")
     d.table(["Obiettivo", "Prova", "Punti"], [

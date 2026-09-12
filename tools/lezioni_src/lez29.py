@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import comune
 NUM = 29
 SLUG = "pagina-phishing-didattica"
 TITOLO = "Pagina di phishing didattica nel lab"
@@ -9,21 +10,21 @@ def dispensa(d):
         "**Durata:** 2 ore.  Struttura: 20 min teoria · 85 min pratica · 15 min difesa.",
         "**Obiettivo:** capire come funziona una pagina di phishing costruendone una nel "
         "laboratorio: un clone del login della Banca che cattura le credenziali e rimanda "
-        "al sito vero, cosi' la vittima non si accorge di nulla.",
+        "al sito vero, così la vittima non si accorge di nulla.",
         "**Al termine sai:** clonare una pagina di login, capire come cattura i dati e "
-        "perche' il redirect al sito vero rende l'inganno credibile.",
+        "perché il redirect al sito vero rende l'inganno credibile.",
         "**Flag in palio:** 2 flag (70 punti).",
     ])
 
     d.box("rosso", "Regola assoluta", items=[
-        "Il phishing e' un reato (sostituzione di persona, frode informatica). Questa "
+        "Il phishing è un reato (sostituzione di persona, frode informatica). Questa "
         "pagina si usa SOLO nel laboratorio isolato, contro il finto utente del lab. Mai, "
         "in nessun caso, verso persone reali.",
     ])
 
     d.h1("Parte 1 · L'esca perfetta (teoria, 20 min)")
     d.h2("Il caso reale")
-    d.p("Il phishing e' l'attacco piu' diffuso al mondo. Arriva una email che sembra della "
+    d.p("Il phishing è l'attacco più diffuso al mondo. Arriva una email che sembra della "
         "banca, con un link a una pagina identica a quella vera. La vittima inserisce "
         "utente e password, che finiscono all'attaccante. Poi la pagina la rimanda al "
         "sito vero: la vittima pensa di aver solo sbagliato a digitare, riprova, entra, e "
@@ -68,20 +69,58 @@ def dispensa(d):
         "Il link alla pagina arriva con una email di social engineering (Lezione 28).",
         "Con il DNS spoofing (Lezione 26) la vittima ci finisce anche digitando l'indirizzo "
         "giusto.",
-        "Senza HTTPS valido, la barra degli indirizzi e' l'unico indizio: da qui la difesa.",
+        "Senza HTTPS valido, la barra degli indirizzi è l'unico indizio: da qui la difesa.",
     ])
 
     d.h1("Parte 3 · Ribaltamento difensivo (15 min)")
     d.box("verde", "Non abboccare", items=[
-        "Guardare sempre l'indirizzo nella barra: il dominio e' quello giusto? (banca vera "
+        "Guardare sempre l'indirizzo nella barra: il dominio è quello giusto? (banca vera "
         "vs banca-verifica-account.xyz)",
         "Diffidare dei link nelle email e nei messaggi: meglio digitare l'indirizzo a mano "
         "o usare i preferiti.",
-        "Il lucchetto HTTPS con dominio corretto; un avviso sul certificato e' un allarme.",
+        "Il lucchetto HTTPS con dominio corretto; un avviso sul certificato è un allarme.",
         "L'autenticazione a due fattori: anche se rubano la password, manca il secondo "
         "fattore.",
         "In azienda: segnalare le email sospette; filtri anti-phishing sulla posta.",
     ])
+    comune.studio(
+        d,
+        approfondimenti=[
+            ('Anatomia di una campagna di phishing', "Dietro una pagina di phishing c'è quasi sempre una piccola 'macchina': un dominio somigliante a quello vero (typosquatting, es. banca-scuola-sicurezza.xyz), una copia fedele del sito bersaglio, un modulo che invia le credenziali all'attaccante e un redirect al sito autentico per non insospettire. L'email che porta il link usa le leve del social engineering (urgenza, autorità). Le campagne più mirate, lo spear phishing, sono cucite su una persona specifica usando l'OSINT. Capire come si monta questo meccanismo, in laboratorio e contro un finto utente, è il modo migliore per imparare a smontarlo: quando saprai riconoscere il dominio finto e il redirect, difficilmente abboccherai."),
+        ],
+        sintesi=[
+            "Il phishing è l'attacco più diffuso: una pagina identica a quella vera che cattura le credenziali.",
+            'Tre ingredienti: il clone (aspetto), la cattura (salva utente/password), il redirect al sito vero (non insospettire).',
+            "Il link arriva con un'email di social engineering; col DNS spoofing la vittima ci finisce anche digitando l'indirizzo.",
+            "Senza HTTPS valido, la barra degli indirizzi è l'unico indizio.",
+            "È un reato: si usa SOLO nel laboratorio, contro il finto utente.",
+        ],
+        glossario=[
+            ('Phishing', "ingannare l'utente con una pagina/e-mail falsa per rubare dati"),
+            ('Pagina civetta / clone', 'copia del sito vero fatta per catturare credenziali'),
+            ('Cattura credenziali', 'salvare utente e password inseriti dalla vittima'),
+            ('Redirect', 'rimandare la vittima al sito vero dopo la cattura'),
+            ('Spear phishing', 'phishing mirato su una persona specifica'),
+        ],
+        errori=[
+            "Usare queste tecniche fuori dal lab: è un reato (sostituzione di persona, frode).",
+            'Dimenticare il redirect: la vittima si insospettisce.',
+            'Pensare che un utente attento non abbocchi mai: capita a tutti, prima o poi.',
+        ],
+        domande=[
+            'Quali sono i tre ingredienti di una pagina di phishing?',
+            "Perché il redirect al sito vero rende l'inganno più efficace?",
+            'Come si combina il phishing con social engineering e DNS spoofing?',
+            "Perché l'HTTPS valido aiuta a smascherarlo?",
+            "Perché questa tecnica va usata solo nel laboratorio?",
+        ],
+        collegamenti=[
+            'Lezione 28: le leve psicologiche che fanno cliccare il link.',
+            'Lezione 26: dirottare la vittima sul sito civetta col DNS.',
+            'Lezione 30: come non abboccare.',
+        ],
+    )
+
 
     d.h2("Punteggio della Lezione 29")
     d.table(["Obiettivo", "Come", "Punti"], [
@@ -113,7 +152,7 @@ def manuale(d):
         "Catena verificata in locale: la vittima invia -> phish.py cattura (flag + password).",
     ])
     d.h1("Soluzioni e valori delle flag")
-    d.p("FLAG_PHISH e' generata a runtime sul bersaglio: `sudo cat /opt/lab/lab29/flags.env`.")
+    d.p("FLAG_PHISH è generata a runtime sul bersaglio: `sudo cat /opt/lab/lab29/flags.env`.")
     d.table(["Passo", "Soluzione", "Flag"], [
         ["2", "phish.py in ascolto ; leggere catturate.log (campo nota)", "FLAG_PHISH (nota catturata)"],
         ["3", "password catturata = Pesc3Rosso! ; lab29-verifica Pesc3Rosso!", "FLAG{credenziali_pescate}"],
@@ -127,6 +166,6 @@ def manuale(d):
         ["la vittima non raggiunge la Kali", "verificare l'IP interno della Kali (10.10.10.5)"],
     ], widths=[3000, 6026])
     d.h1("Nota etica e di sicurezza")
-    d.p("E' fondamentale ripetere agli studenti che questa tecnica e' illegale fuori dal "
-        "laboratorio. Il valore didattico e' capire l'inganno per difendersi. A fine "
+    d.p("È fondamentale ripetere agli studenti che questa tecnica è illegale fuori dal "
+        "laboratorio. Il valore didattico è capire l'inganno per difendersi. A fine "
         "lezione: `systemctl disable --now lab29-vittima` sul bersaglio.")
