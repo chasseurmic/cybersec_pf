@@ -36,7 +36,7 @@ in `tools/lezioni_src/lezNN.py`. Build con `python3 tools/build_lezioni.py`
 | 24 | Sniffing di credenziali con scapy | B6 | ok | ok | ok | verificata |
 | 25 | ARP spoofing e MITM con scapy | B6 | ok | ok | ok | verificata |
 | 26 | DNS spoofing in rete locale | B6 | ok | ok | ok | verificata |
-| 27 | Difese di rete (firewall, IDS) | B6 | - | - | - | da fare |
+| 27 | Difese di rete (firewall, IDS) | B6 | ok | ok | ok | verificata |
 | 28 | Social engineering, principi e casi | B7 | - | - | - | da fare |
 | 29 | Pagina di phishing didattica | B7 | - | - | - | da fare |
 | 30 | Riconoscere e difendersi dal phishing | B7 | - | - | - | da fare |
