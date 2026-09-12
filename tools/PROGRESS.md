@@ -40,7 +40,7 @@ in `tools/lezioni_src/lezNN.py`. Build con `python3 tools/build_lezioni.py`
 | 28 | Social engineering, principi e casi | B7 | ok | ok | ok | verificata |
 | 29 | Pagina di phishing didattica | B7 | ok | ok | ok | verificata |
 | 30 | Riconoscere e difendersi dal phishing | B7 | ok | ok | ok | verificata |
-| 31 | Malware: tipi e ciclo di vita | B8 | - | - | - | da fare |
+| 31 | Malware: tipi e ciclo di vita | B8 | ok | ok | ok | verificata |
 | 32 | Analisi statica di base in sandbox | B8 | - | - | - | da fare |
 | 33 | Ransomware didattico in sandbox | B8 | - | - | - | da fare |
 | 34 | Analisi dinamica e IOC | B8 | - | - | - | da fare |
